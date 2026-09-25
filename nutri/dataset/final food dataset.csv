@@ -1,0 +1,262 @@
+food_id,food_name,meal_type,food_type,calories_kcal,protein_g,carbs_g,fats_g,fiber_g,vitamins,minerals
+1,Idli Sambar,Breakfast,Vegetarian,180,6.0,32.0,3.0,4.0,Vitamin A,Iron
+2,Dosa,Breakfast,Vegetarian,170,4.0,28.0,5.0,2.0,Vitamin B-complex,Magnesium
+3,Masala Dosa,Breakfast,Vegetarian,210,5.0,32.0,6.0,3.0,Vitamin B-complex,Magnesium
+4,Poha,Breakfast,Vegan,180,4.0,30.0,5.0,3.0,Vitamin B-complex,Magnesium
+5,Upma,Breakfast,Vegetarian,190,5.0,25.0,6.0,2.0,Vitamin B-complex,Magnesium
+6,Vegetable Uttapam,Breakfast,Vegetarian,200,6.0,35.0,4.0,3.0,Vitamin A,Iron
+7,Oats Porridge,Breakfast,Vegan,150,5.0,27.0,3.0,4.0,Vitamin B-complex,Iron
+8,Paneer Paratha,Breakfast,Vegetarian,270,10.0,32.0,11.0,3.0,Vitamin B-complex,Magnesium
+9,Aloo Paratha,Breakfast,Vegetarian,290,6.0,38.0,12.0,4.0,Vitamin B-complex,Magnesium
+10,Bread Butter,Breakfast,Vegetarian,230,5.0,26.0,12.0,1.0,Vitamin B12,Calcium
+11,Bread Omelette,Breakfast,Non-vegetarian,280,14.0,28.0,14.0,1.0,Vitamin D,Iron
+12,Boiled Eggs,Breakfast,Non-vegetarian,140,12.0,2.0,10.0,0.0,Vitamin D,Iron
+13,Masala Omelette,Breakfast,Non-vegetarian,200,15.0,4.0,14.0,1.0,Vitamin D,Iron
+14,Fruit Bowl,Breakfast,Vegan,120,2.0,30.0,0.0,4.0,Vitamin C,Potassium
+15,Sprouts Salad,Breakfast,Vegan,160,10.0,20.0,3.0,5.0,Vitamin B-complex,Iron
+16,Moong Dal Chilla,Breakfast,Vegan,190,9.0,26.0,5.0,4.0,Vitamin B-complex,Iron
+17,Thepla,Breakfast,Vegetarian,210,6.0,30.0,7.0,3.0,Vitamin B-complex,Iron
+18,Poori Bhaji,Breakfast,Vegetarian,320,6.0,42.0,14.0,4.0,Vitamin B-complex,Iron
+19,Rava Idli,Breakfast,Vegetarian,170,5.0,26.0,4.0,2.0,Vitamin B-complex,Magnesium
+20,Curd Rice,Breakfast,Vegetarian,200,6.0,28.0,5.0,1.0,Vitamin B-complex,Magnesium
+21,Vegetable Sandwich,Breakfast,Vegetarian,220,7.0,32.0,7.0,4.0,Vitamin A,Iron
+22,Avocado Toast,Breakfast,Vegan,240,6.0,28.0,12.0,7.0,Vitamin B-complex,Iron
+23,Besan Toast,Breakfast,Vegan,210,9.0,25.0,7.0,4.0,Vitamin B-complex,Iron
+24,Pancakes,Breakfast,Vegetarian,250,6.0,38.0,8.0,2.0,Vitamin B-complex,Iron
+25,Smoothie Banana,Breakfast,Vegan,210,4.0,35.0,4.0,4.0,Vitamin C,Potassium
+26,Smoothie Mixed Fruit,Breakfast,Vegan,190,3.0,34.0,3.0,5.0,Vitamin C,Potassium
+27,Protein Shake,Breakfast,Vegan,200,20.0,15.0,3.0,2.0,Vitamin B-complex,Iron
+28,Vegetable Poha,Breakfast,Vegan,170,4.0,28.0,4.0,3.0,Vitamin A,Iron
+29,Chia Pudding,Breakfast,Vegan,180,6.0,22.0,7.0,6.0,Vitamin B-complex,Iron
+30,Ragi Dosa,Breakfast,Vegan,190,5.0,30.0,4.0,5.0,Vitamin B-complex,Magnesium
+31,Ragi Malt,Breakfast,Vegan,160,4.0,28.0,2.0,4.0,Vitamin B-complex,Magnesium
+32,Pesarattu,Breakfast,Vegan,210,10.0,28.0,5.0,5.0,Vitamin B-complex,Iron
+33,Vegetable Upma,Breakfast,Vegetarian,200,6.0,26.0,6.0,3.0,Vitamin A,Iron
+34,Paneer Toast,Breakfast,Vegetarian,260,10.0,28.0,14.0,2.0,Vitamin B12,Calcium
+35,Cheese Omelette,Breakfast,Non-vegetarian,240,16.0,4.0,18.0,0.0,Vitamin B12,Calcium
+36,Idiyappam Veg Stew,Breakfast,Vegan,230,6.0,40.0,4.0,5.0,Vitamin A,Iron
+37,Appam Veg Stew,Breakfast,Vegan,260,6.0,42.0,6.0,4.0,Vitamin A,Iron
+38,Vegetable Dalia,Breakfast,Vegan,180,6.0,32.0,3.0,5.0,Vitamin A,Iron
+39,Cornflakes Milk,Breakfast,Vegetarian,210,7.0,34.0,4.0,2.0,Vitamin B12,Calcium
+40,Peanut Butter Toast,Breakfast,Vegetarian,250,9.0,26.0,14.0,3.0,Vitamin B12,Calcium
+41,Rajma Curry White Rice,Lunch,Vegetarian,360,13.0,62.0,6.0,10.0,Vitamin A,Iron
+42,Rajma Curry Brown Rice,Lunch,Vegetarian,340,14.0,58.0,5.0,11.0,Vitamin A,Iron
+43,Chole Curry White Rice,Lunch,Vegan,370,15.0,60.0,7.0,11.0,Vitamin A,Iron
+44,Chole Curry Roti,Lunch,Vegan,330,14.0,48.0,6.0,10.0,Vitamin A,Iron
+45,Dal Tadka White Rice,Lunch,Vegetarian,300,12.0,48.0,6.0,7.0,Vitamin B-complex,Magnesium
+46,Dal Tadka Roti,Lunch,Vegetarian,280,11.0,40.0,5.0,7.0,Vitamin B-complex,Magnesium
+47,Palak Paneer Roti,Lunch,Vegetarian,340,16.0,30.0,16.0,5.0,Vitamin A,Iron
+48,Paneer Butter Masala Roti,Lunch,Vegetarian,360,15.0,34.0,18.0,4.0,Vitamin B-complex,Magnesium
+49,Vegetable Curry Rice,Lunch,Vegan,320,8.0,52.0,7.0,8.0,Vitamin A,Iron
+50,Vegetable Curry Roti,Lunch,Vegan,290,7.0,44.0,6.0,8.0,Vitamin A,Iron
+51,Chicken Curry White Rice,Lunch,Non-vegetarian,420,28.0,46.0,16.0,3.0,Vitamin A,Iron
+52,Chicken Curry Brown Rice,Lunch,Non-vegetarian,400,29.0,42.0,15.0,4.0,Vitamin A,Iron
+53,Fish Curry Rice,Lunch,Non-vegetarian,390,26.0,44.0,14.0,2.0,Vitamin A,Iron
+54,Egg Curry Rice,Lunch,Non-vegetarian,360,20.0,42.0,15.0,3.0,Vitamin A,Iron
+55,Sambar Rice,Lunch,Vegan,300,10.0,50.0,5.0,9.0,Vitamin A,Iron
+56,Curd Rice Veg Curry,Lunch,Vegetarian,330,9.0,46.0,8.0,3.0,Vitamin A,Iron
+57,Soya Chunk Curry Rice,Lunch,Vegan,350,22.0,42.0,8.0,9.0,Vitamin A,Iron
+58,Tofu Curry Rice,Lunch,Vegan,330,18.0,40.0,9.0,8.0,Vitamin A,Iron
+59,Mixed Dal Rice,Lunch,Vegetarian,310,14.0,48.0,6.0,9.0,Vitamin B-complex,Magnesium
+60,Vegetable Khichdi,Lunch,Vegan,300,10.0,50.0,5.0,9.0,Vitamin A,Iron
+61,Paneer Khichdi,Lunch,Vegetarian,340,14.0,46.0,10.0,6.0,Vitamin B-complex,Magnesium
+62,Lemon Rice Dal,Lunch,Vegan,320,9.0,52.0,6.0,5.0,Vitamin C,Potassium
+63,Vegetable Pulao Raita,Lunch,Vegetarian,360,10.0,50.0,10.0,5.0,Vitamin A,Iron
+64,Chicken Biryani,Lunch,Non-vegetarian,420,22.0,45.0,18.0,2.0,Vitamin B12,Zinc
+65,Veg Biryani Raita,Lunch,Vegetarian,380,10.0,54.0,12.0,6.0,Vitamin B12,Calcium
+66,Curd Rice Pickle,Lunch,Vegetarian,310,8.0,44.0,7.0,2.0,Vitamin B-complex,Magnesium
+67,Ragi Mudde Sambar,Lunch,Vegan,340,10.0,58.0,4.0,9.0,Vitamin A,Iron
+68,Bajra Roti Veg Curry,Lunch,Vegan,320,9.0,50.0,6.0,10.0,Vitamin A,Iron
+69,Jowar Roti Dal,Lunch,Vegan,300,10.0,46.0,4.0,9.0,Vitamin B-complex,Magnesium
+70,Chicken Chettinad Rice,Lunch,Non-vegetarian,430,30.0,40.0,18.0,3.0,Vitamin B-complex,Magnesium
+71,Fish Fry Rice,Lunch,Non-vegetarian,410,28.0,38.0,20.0,2.0,Vitamin B-complex,Magnesium
+72,Egg Fried Rice,Lunch,Non-vegetarian,380,18.0,48.0,14.0,2.0,Vitamin B-complex,Magnesium
+73,Vegetable Fried Rice,Lunch,Vegan,340,8.0,52.0,10.0,4.0,Vitamin A,Iron
+74,Paneer Fried Rice,Lunch,Vegetarian,360,14.0,45.0,14.0,3.0,Vitamin B-complex,Magnesium
+75,Sambar Sadham,Lunch,Vegan,310,10.0,50.0,5.0,9.0,Vitamin A,Iron
+76,Vegetable Thali,Lunch,Vegetarian,420,12.0,56.0,14.0,10.0,Vitamin A,Iron
+77,Gujarati Dal Rice,Lunch,Vegetarian,320,11.0,52.0,6.0,7.0,Vitamin B-complex,Magnesium
+78,Kadhi Rice,Lunch,Vegetarian,330,9.0,48.0,8.0,4.0,Vitamin B-complex,Magnesium
+79,Chicken Korma Roti,Lunch,Non-vegetarian,380,26.0,32.0,16.0,2.0,Vitamin B-complex,Magnesium
+80,Mutton Curry Rice,Lunch,Non-vegetarian,450,30.0,38.0,22.0,2.0,Vitamin A,Iron
+81,Vegetable Stew Appam,Lunch,Vegan,360,8.0,52.0,10.0,6.0,Vitamin A,Iron
+82,Paneer Curry Brown Rice,Lunch,Vegetarian,360,15.0,44.0,14.0,5.0,Vitamin A,Iron
+83,Tofu Palak Rice,Lunch,Vegan,340,18.0,42.0,10.0,8.0,Vitamin A,Iron
+84,Drumstick Sambar Rice,Lunch,Vegan,300,9.0,50.0,4.0,10.0,Vitamin A,Iron
+85,Chana Masala Rice,Lunch,Vegan,360,16.0,58.0,6.0,12.0,Vitamin B-complex,Magnesium
+86,Chana Masala Roti,Lunch,Vegan,320,15.0,46.0,5.0,11.0,Vitamin B-complex,Magnesium
+87,Vegetable Kofta Roti,Lunch,Vegetarian,350,12.0,38.0,16.0,5.0,Vitamin A,Iron
+88,Paneer Kofta Roti,Lunch,Vegetarian,390,16.0,36.0,20.0,4.0,Vitamin B-complex,Magnesium
+89,Fish Curry Brown Rice,Lunch,Non-vegetarian,370,25.0,40.0,14.0,3.0,Vitamin A,Iron
+90,Vegetable Dalia,Lunch,Vegan,280,9.0,48.0,4.0,9.0,Vitamin A,Iron
+91,Apple,Snacks,Vegan,95,0.5,25.0,0.3,4.0,Vitamin C,Potassium
+92,Banana,Snacks,Vegan,105,1.3,27.0,0.4,3.0,Vitamin C,Potassium
+93,Orange,Snacks,Vegan,62,1.2,15.0,0.2,3.0,Vitamin C,Potassium
+94,Mango,Snacks,Vegan,135,1.1,35.0,0.6,3.0,Vitamin C,Potassium
+95,Papaya,Snacks,Vegan,60,0.7,15.0,0.1,3.0,Vitamin C,Potassium
+96,Guava,Snacks,Vegan,68,2.6,14.0,0.9,5.0,Vitamin C,Potassium
+97,Pineapple,Snacks,Vegan,82,0.9,21.0,0.2,2.0,Vitamin C,Potassium
+98,Watermelon,Snacks,Vegan,45,0.9,11.0,0.2,1.0,Vitamin C,Potassium
+99,Pomegranate,Snacks,Vegan,105,1.7,26.0,0.4,4.0,Vitamin C,Potassium
+100,Chikoo,Snacks,Vegan,140,0.9,36.0,1.1,5.0,Vitamin C,Potassium
+101,Jackfruit,Snacks,Vegan,155,2.8,40.0,1.5,3.0,Vitamin C,Potassium
+102,Dates Dry,Snacks,Vegan,120,1.0,32.0,0.2,3.0,Vitamin B-complex,Iron
+103,Raisins,Snacks,Vegan,110,1.2,29.0,0.2,2.0,Vitamin B-complex,Iron
+104,Almonds,Snacks,Vegan,160,6.0,6.0,14.0,4.0,Vitamin E,Magnesium
+105,Walnuts,Snacks,Vegan,185,4.0,4.0,18.0,2.0,Vitamin E,Magnesium
+106,Peanuts Roasted,Snacks,Vegan,170,7.0,12.0,14.0,3.0,Vitamin E,Magnesium
+107,Roasted Chana,Snacks,Vegan,140,7.0,22.0,2.0,6.0,Vitamin B-complex,Iron
+108,Boiled Corn,Snacks,Vegan,150,4.0,30.0,2.0,5.0,Vitamin B-complex,Iron
+109,Popcorn,Snacks,Vegan,110,3.0,22.0,2.0,4.0,Vitamin B-complex,Iron
+110,Makhana Roasted,Snacks,Vegan,130,4.0,20.0,3.0,5.0,Vitamin B-complex,Iron
+111,Sprouts Chaat,Snacks,Vegan,160,10.0,20.0,3.0,6.0,Vitamin B-complex,Iron
+112,Fruit Chaat,Snacks,Vegan,120,2.0,28.0,0.0,4.0,Vitamin C,Potassium
+113,Banana Smoothie,Snacks,Vegan,210,4.0,35.0,4.0,4.0,Vitamin C,Potassium
+114,Mixed Fruit Smoothie,Snacks,Vegan,190,3.0,34.0,3.0,5.0,Vitamin C,Potassium
+115,Curd Fruit Bowl,Snacks,Vegetarian,150,6.0,22.0,4.0,2.0,Vitamin C,Potassium
+116,Peanut Chikki,Snacks,Vegan,180,6.0,20.0,10.0,3.0,Vitamin E,Magnesium
+117,Energy Balls,Snacks,Vegan,190,6.0,24.0,8.0,4.0,Vitamin B-complex,Iron
+118,Vegetable Soup,Snacks,Vegan,90,3.0,15.0,1.0,3.0,Vitamin A,Iron
+119,Tomato Soup,Snacks,Vegan,100,3.0,18.0,1.0,3.0,Vitamin B-complex,Iron
+120,Samosa,Snacks,Vegetarian,260,5.0,32.0,14.0,3.0,Vitamin B-complex,Iron
+121,Vegetable Cutlet,Snacks,Vegetarian,220,6.0,26.0,10.0,4.0,Vitamin A,Iron
+122,Pav Bhaji,Snacks,Vegetarian,380,10.0,48.0,14.0,6.0,Vitamin B-complex,Iron
+123,Paneer Pakora,Snacks,Vegetarian,280,12.0,14.0,18.0,2.0,Vitamin B12,Calcium
+124,Cheese Sandwich,Snacks,Vegetarian,260,10.0,28.0,14.0,2.0,Vitamin B12,Calcium
+125,Grilled Sandwich,Snacks,Vegetarian,280,9.0,34.0,12.0,3.0,Vitamin B-complex,Iron
+126,Paneer Roll,Snacks,Vegetarian,320,14.0,30.0,16.0,2.0,Vitamin B12,Calcium
+127,Egg Roll,Snacks,Non-vegetarian,300,16.0,28.0,14.0,2.0,Vitamin D,Iron
+128,Egg Bhurji,Snacks,Non-vegetarian,220,14.0,6.0,16.0,1.0,Vitamin D,Iron
+129,Chicken Nuggets,Snacks,Non-vegetarian,320,18.0,22.0,20.0,1.0,Vitamin B12,Zinc
+130,Protein Shake,Snacks,Vegan,220,22.0,12.0,3.0,2.0,Vitamin B-complex,Iron
+131,Dal Curry Roti,Dinner,Vegetarian,260,11.0,38.0,5.0,7.0,Vitamin A,Iron
+132,Vegetable Curry Roti,Dinner,Vegan,240,6.0,36.0,5.0,7.0,Vitamin A,Iron
+133,Paneer Curry Roti,Dinner,Vegetarian,320,15.0,30.0,16.0,4.0,Vitamin A,Iron
+134,Chicken Curry Roti,Dinner,Non-vegetarian,350,26.0,28.0,14.0,3.0,Vitamin A,Iron
+135,Fish Curry Roti,Dinner,Non-vegetarian,330,24.0,26.0,12.0,2.0,Vitamin A,Iron
+136,Khichdi,Dinner,Vegetarian,260,9.0,42.0,4.0,7.0,Vitamin B-complex,Magnesium
+137,Tofu Curry Roti,Dinner,Vegan,280,16.0,32.0,10.0,6.0,Vitamin A,Iron
+138,Lentil Soup Roti,Dinner,Vegan,240,12.0,36.0,4.0,8.0,Vitamin B-complex,Magnesium
+139,Egg Curry Roti,Dinner,Non-vegetarian,300,18.0,28.0,14.0,3.0,Vitamin A,Iron
+140,Vegetable Stir Fry Roti,Dinner,Vegan,260,7.0,34.0,8.0,6.0,Vitamin A,Iron
+141,Paneer Bhurji Roti,Dinner,Vegetarian,330,16.0,30.0,16.0,4.0,Vitamin B-complex,Magnesium
+142,Grilled Chicken Curry,Dinner,Non-vegetarian,300,32.0,14.0,8.0,3.0,Vitamin A,Iron
+143,Stuffed Capsicum Roti,Dinner,Vegetarian,260,7.0,34.0,8.0,5.0,Vitamin A,Iron
+144,Mixed Dal Brown Rice,Dinner,Vegetarian,300,14.0,44.0,5.0,9.0,Vitamin B-complex,Magnesium
+145,Vegetable Khichdi,Dinner,Vegan,280,9.0,46.0,4.0,8.0,Vitamin A,Iron
+146,Chicken Soup Roti,Dinner,Non-vegetarian,240,22.0,26.0,4.0,2.0,Vitamin B-complex,Magnesium
+147,Veg Fried Rice Dal,Dinner,Vegan,320,10.0,52.0,8.0,6.0,Vitamin B-complex,Magnesium
+148,Paneer Salad Roti,Dinner,Vegetarian,300,14.0,28.0,14.0,4.0,Vitamin B-complex,Magnesium
+149,Tofu Salad Roti,Dinner,Vegan,260,14.0,30.0,10.0,5.0,Vitamin B-complex,Magnesium
+150,Masala Omelette Roti,Dinner,Non-vegetarian,280,16.0,26.0,14.0,2.0,Vitamin B-complex,Magnesium
+151,Ragi Roti Veg Curry,Dinner,Vegan,270,8.0,42.0,5.0,8.0,Vitamin A,Iron
+152,Curd Rice Veg Curry,Dinner,Vegetarian,290,8.0,40.0,7.0,3.0,Vitamin A,Iron
+153,Vegetable Stew Appam,Dinner,Vegan,340,8.0,50.0,8.0,6.0,Vitamin A,Iron
+154,Chicken Wrap Indian,Dinner,Non-vegetarian,320,24.0,28.0,12.0,2.0,Vitamin B12,Zinc
+155,Paneer Rice Bowl,Dinner,Vegetarian,350,14.0,48.0,12.0,4.0,Vitamin B-complex,Magnesium
+156,Vegetable Dal Soup Roti,Dinner,Vegan,230,11.0,36.0,3.0,8.0,Vitamin A,Iron
+157,Tomato Rasam Rice,Dinner,Vegan,260,7.0,46.0,3.0,6.0,Vitamin A,Iron
+158,Sambar Idli,Dinner,Vegan,280,9.0,48.0,4.0,8.0,Vitamin A,Iron
+159,Curd Ragi Roti,Dinner,Vegetarian,270,8.0,40.0,5.0,4.0,Vitamin B-complex,Magnesium
+160,Vegetable Upma,Dinner,Vegetarian,200,6.0,26.0,6.0,3.0,Vitamin A,Iron
+161,Paneer Tikka Roti,Dinner,Vegetarian,340,18.0,26.0,18.0,3.0,Vitamin B-complex,Magnesium
+162,Chicken Tikka Roti,Dinner,Non-vegetarian,360,30.0,24.0,14.0,2.0,Vitamin B-complex,Magnesium
+163,Vegetable Dalia,Dinner,Vegan,240,8.0,42.0,3.0,8.0,Vitamin A,Iron
+164,Soya Chunk Stir Fry Roti,Dinner,Vegan,300,22.0,34.0,8.0,7.0,Vitamin B-complex,Magnesium
+165,Vegetable Poha,Dinner,Vegan,180,4.0,28.0,4.0,3.0,Vitamin A,Iron
+166,Vegetable Pulao,Dinner,Vegan,300,8.0,48.0,8.0,6.0,Vitamin A,Iron
+167,Paneer Khichdi,Dinner,Vegetarian,330,14.0,44.0,10.0,6.0,Vitamin B-complex,Magnesium
+168,Egg Fried Rice,Dinner,Non-vegetarian,360,18.0,46.0,14.0,2.0,Vitamin B-complex,Magnesium
+169,Vegetable Rice Bowl,Dinner,Vegan,280,7.0,46.0,6.0,7.0,Vitamin A,Iron
+170,Steamed Veg Curry Roti,Dinner,Vegan,240,6.0,36.0,4.0,7.0,Vitamin A,Iron
+171,Idli,Breakfast,Vegetarian,60,2.0,12.0,0.5,1.0,Vitamin B-complex,Magnesium
+172,Dosa Plain,Breakfast,Vegetarian,160,4.0,26.0,4.0,2.0,Vitamin B-complex,Magnesium
+173,Vegetable Paratha,Breakfast,Vegetarian,280,7.0,36.0,12.0,4.0,Vitamin A,Iron
+174,Curd Fruit Smoothie,Snacks,Vegetarian,180,6.0,28.0,4.0,2.0,Vitamin C,Potassium
+175,Mixed Nuts Bowl,Snacks,Vegan,200,6.0,10.0,16.0,4.0,Vitamin E,Magnesium
+176,Buttermilk,Snacks,Vegetarian,60,3.0,5.0,2.0,0.0,Vitamin B12,Calcium
+177,Coconut Water,Snacks,Vegan,45,1.0,9.0,0.0,1.0,Vitamin B-complex,Iron
+178,Pineapple Chaat,Snacks,Vegan,90,1.0,22.0,0.2,2.0,Vitamin C,Potassium
+179,Guava Slices,Snacks,Vegan,70,2.0,14.0,0.5,5.0,Vitamin C,Potassium
+180,Apple Chaat,Snacks,Vegan,100,0.5,26.0,0.3,4.0,Vitamin C,Potassium
+181,Bajra Roti Dal,Dinner,Vegan,300,10.0,48.0,5.0,9.0,Vitamin B-complex,Magnesium
+182,Jowar Roti Veg Curry,Dinner,Vegan,290,9.0,46.0,5.0,8.0,Vitamin A,Iron
+183,Paneer Curry Rice,Dinner,Vegetarian,360,15.0,44.0,14.0,5.0,Vitamin A,Iron
+184,Tofu Curry Rice,Dinner,Vegan,330,18.0,40.0,9.0,8.0,Vitamin A,Iron
+185,Chicken Curry Rice,Dinner,Non-vegetarian,400,28.0,42.0,15.0,4.0,Vitamin A,Iron
+186,Fish Curry Rice,Dinner,Non-vegetarian,380,26.0,40.0,14.0,3.0,Vitamin A,Iron
+187,Sambar Rice,Dinner,Vegan,300,10.0,50.0,5.0,9.0,Vitamin A,Iron
+188,Curd Rice,Dinner,Vegetarian,290,8.0,40.0,7.0,3.0,Vitamin B-complex,Magnesium
+189,Vegetable Thali Light,Dinner,Vegetarian,360,10.0,48.0,12.0,8.0,Vitamin A,Iron
+190,Lentil Veg Bowl,Dinner,Vegan,260,12.0,40.0,4.0,8.0,Vitamin B-complex,Iron
+191,Paneer Veg Bowl,Dinner,Vegetarian,320,14.0,38.0,14.0,5.0,Vitamin B12,Calcium
+192,Chicken Fry Pieces,Dinner,Non-vegetarian,340,26.0,32.0,10.0,4.0,Vitamin B12,Zinc
+193,Vegetable Soup Roti,Dinner,Vegan,220,6.0,34.0,3.0,6.0,Vitamin A,Iron
+194,Ragi Dosa,Dinner,Vegan,190,5.0,30.0,4.0,5.0,Vitamin B-complex,Magnesium
+195,Pesarattu,Dinner,Vegan,210,10.0,28.0,5.0,5.0,Vitamin B-complex,Iron
+196,Vegetable Uttapam,Dinner,Vegetarian,200,6.0,35.0,4.0,3.0,Vitamin A,Iron
+197,Paneer Paratha,Dinner,Vegetarian,280,10.0,32.0,12.0,3.0,Vitamin B-complex,Magnesium
+198,Chicken Paratha Roll,Dinner,Non-vegetarian,360,24.0,32.0,14.0,2.0,Vitamin B-complex,Magnesium
+199,Vegetable Wrap,Dinner,Vegan,260,8.0,40.0,6.0,7.0,Vitamin A,Iron
+200,Steamed Veg Bowl,Dinner,Vegan,180,6.0,22.0,4.0,6.0,Vitamin B-complex,Iron
+201,Grilled Chicken Breast,Dinner,Non-vegetarian,137,18.4,3.9,7.9,0.9,"B12, B6","Iron, Zinc"
+202,Chicken Clear Soup,Lunch,Non-vegetarian,147,23.1,5.5,2.4,0.5,"B12, B6","Iron, Zinc"
+203,Chicken Stew,Lunch,Non-vegetarian,129,22.9,8.8,4.0,0.8,"B12, B6","Iron, Zinc"
+204,Tandoori Chicken (Skinless),Lunch,Non-vegetarian,145,19.3,9.2,3.3,0.9,"B12, B6","Iron, Zinc"
+205,"Chicken Sukka (Dry, Low Oil)",Snack,Non-vegetarian,114,18.9,7.8,3.5,1.7,"B12, B6","Iron, Zinc"
+206,Egg White Omelette,Dinner,Non-vegetarian,163,18.0,9.2,3.0,1.0,"A, D, B12","Iron, Selenium"
+207,Egg White Bhurji,Lunch,Non-vegetarian,154,14.8,5.3,1.8,1.9,"A, D, B12","Iron, Selenium"
+208,Boiled Eggs,Breakfast,Non-vegetarian,154,15.6,3.8,2.1,0.6,"A, D, B12","Iron, Selenium"
+209,Fish Stew,Breakfast,Non-vegetarian,109,28.8,4.9,5.1,2.0,"B12, D","Iodine, Selenium"
+210,Steamed Fish,Dinner,Non-vegetarian (Low Oil),171,26.1,4.8,3.9,1.3,"B12 , D","Iodine , Selenium"
+211,Grilled Fish,Dinner,Non-vegetarian (Low Oil),148,22.5,2.0,4.5,0.5,"B12 , D","Iodine , Selenium"
+212,Fish Curry (Low Oil),Lunch,Non-vegetarian,104,29.3,7.1,4.2,0.6,"B12, D","Iodine, Selenium"
+213,Prawn Stir Fry,Dinner,Non-vegetarian,162,28.0,2.3,4.5,1.3,"B12, D","Iodine, Selenium"
+214,Steamed Prawns,Dinner,Non-vegetarian,119,17.0,3.8,3.7,1.5,"B12, D","Iodine, Selenium"
+215,Crab Soup,Lunch,Non-vegetarian,134,25.2,5.5,5.8,1.6,"B12, D","Iodine, Selenium"
+216,Chicken Pepper Fry (Low Oil),Lunch,Non-vegetarian,119,21.7,8.0,6.8,1.0,"B12, B6","Iron, Zinc"
+217,Chicken Kurma (Light),Dinner,Non-vegetarian,124,26.7,9.0,6.0,1.6,"B12, B6","Iron, Zinc"
+218,Chicken Manchow Soup,Snack,Non-vegetarian,107,18.6,4.4,4.3,0.5,"B12, B6","Iron, Zinc"
+219,Fish Clear Soup,Dinner,Non-vegetarian,144,27.0,7.5,1.8,1.3,"B12, D","Iodine, Selenium"
+220,Egg Drop Soup,Dinner,Non-vegetarian,96,12.3,5.3,3.3,1.5,"A, D, B12","Iron, Selenium"
+221,Chicken Shorba,Lunch,Non-vegetarian,102,15.1,4.8,4.8,0.1,"B12, B6","Iron, Zinc"
+222,Mutton Soup (Lean),Lunch,Non-vegetarian,105,27.2,4.6,5.5,0.4,"B12, B6","Iron, Zinc"
+223,Chicken Lettuce Wrap,Lunch,Non-vegetarian,167,18.5,6.9,2.8,0.4,"B12, B6","Iron, Zinc"
+224,Fish Tikka (Low Oil),Lunch,Non-vegetarian,104,17.5,8.0,3.9,0.1,"B12, D","Iodine, Selenium"
+225,Prawn Soup,Lunch,Non-vegetarian,99,22.8,5.4,5.9,1.1,"B12, D","Iodine, Selenium"
+226,Egg White Scramble,Snack,Non-vegetarian,123,17.3,7.5,3.4,0.3,"A, D, B12","Iron, Selenium"
+227,Chicken Salad (Indian Style),Dinner,Non-vegetarian,118,20.2,7.3,4.8,0.8,"B12, B6","Iron, Zinc"
+228,Fish Steamed with Spices,Lunch,Non-vegetarian,144,15.7,1.1,2.2,0.1,"B12, D","Iodine, Selenium"
+229,Chicken Broth,Lunch,Non-vegetarian,154,22.8,3.9,2.6,1.1,"B12, B6","Iron, Zinc"
+230,Prawn Pepper Fry (Low Oil),Lunch,Non-vegetarian,95,20.0,6.3,2.6,2.0,"B12, D","Iodine, Selenium"
+231,Crab Clear Soup,Lunch,Non-vegetarian,139,20.1,3.2,3.1,1.5,"B12, D","Iodine, Selenium"
+232,Chicken Kebab (Air Fried),Lunch,Non-vegetarian,140,28.1,1.2,3.6,0.6,"B12, B6","Iron, Zinc"
+233,Fish Curry (Steamed),Lunch,Non-vegetarian,167,21.8,7.2,4.8,0.6,"B12, D","Iodine, Selenium"
+234,Egg White Curry,Lunch,Non-vegetarian,151,16.6,6.9,3.3,1.4,"A, D, B12","Iron, Selenium"
+235,Chicken Rasam,Lunch,Non-vegetarian,98,29.4,9.8,3.2,1.0,"B12, B6","Iron, Zinc"
+236,Fish Rasam,Dinner,Non-vegetarian,102,20.5,3.1,3.8,0.6,"B12, D","Iodine, Selenium"
+237,Chicken Saaru,Dinner,Non-vegetarian,112,20.7,6.9,5.6,1.5,"B12, B6","Iron, Zinc"
+238,Egg White Roast,Breakfast,Non-vegetarian,119,15.6,3.2,3.6,1.5,"A, D, B12","Iron, Selenium"
+239,Fish Pepper Soup,Snack,Non-vegetarian,145,17.2,1.3,4.2,0.5,"B12, D","Iodine, Selenium"
+240,Chicken Clear Gravy,Lunch,Non-vegetarian,168,29.8,8.4,5.8,1.5,"B12, B6","Iron, Zinc"
+241,Prawn Clear Curry,Snack,Non-vegetarian,125,27.2,1.8,3.5,1.4,"B12, D","Iodine, Selenium"
+242,Chicken Kebab,Snack,Non-vegetarian,111,21.9,5.0,2.6,1.4,"B12, B6","Iron, Zinc"
+243,Fish Lime Soup,Snack,Non-vegetarian,161,24.4,3.2,5.2,0.3,"B12, D","Iodine, Selenium"
+244,Guava slices (1 cup),Snack,Vegan,112,4.2,24.0,1.6,9.0,Vitamin C,Potassium
+245,Orange (medium),Snack,Vegan,62,1.2,15.4,0.2,3.1,Vitamin C,Calcium
+246,Pear slices (1 cup),Snack,Vegan,96,0.6,26.0,0.2,5.5,Vitamin C,Potassium
+247,Kiwi (1 medium),Snack,Vegan,42,0.8,10.0,0.4,2.1,Vitamin C,Magnesium
+248,Roasted makhana (10g),Snack,Vegan,35,1.2,7.0,0.1,0.8,Vitamin B-complex,Magnesium
+249,Roasted chana (20g),Snack,Vegan,74,4.0,12.0,1.2,3.5,Vitamin B6,Iron
+250,Boiled chickpeas (40g),Snack,Vegan,66,3.5,11.0,1.0,3.0,Vitamin B9,Iron
+251,Edamame boiled (50g),Snack,Vegan,61,6.0,5.0,2.5,2.5,Vitamin K,Iron
+252,Tofu cubes (50g),Snack,Vegan,76,8.0,2.0,4.8,0.3,Vitamin B1,Calcium
+253,Cottage cheese cubes (40g),Snack,Vegetarian,98,6.5,2.5,7.5,0.0,Vitamin B12,Calcium
+254,Unsweetened soy milk (1 cup),Snack,Vegan,80,7.0,4.0,4.0,1.0,Vitamin B12,Calcium
+255,Pumpkin seeds (10g),Snack,Vegan,56,3.0,2.0,4.5,1.1,Vitamin E,Magnesium
+256,Sunflower seeds (10g),Snack,Vegan,58,2.0,2.0,5.0,1.1,Vitamin E,Magnesium
+257,Watermelon cubes (1 cup),Snack,Vegan,46,0.9,11.0,0.2,0.6,Vitamin A,Potassium
+258,Papaya cubes (1 cup),Snack,Vegan,55,0.9,14.0,0.2,2.5,Vitamin A,Potassium
+259,Grilled chicken breast cubes(40gm),Snack,Non-vegetarian,66,12.4,0.0,1.4,0.0,Vitamin B6,Phosphorous
+260,Boiled Egg Whites(2 Large),Snack,Non-vegetarian,34,7.2,0.5,0.1,0.0,Vitamin B2,Selenium
+261,Steamed fish,Snack,Non-vegetarian,97,10.5,0.0,5.5,0.0,Vitamin D,Phosphorous 

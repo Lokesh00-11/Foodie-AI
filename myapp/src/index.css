@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", Arial, Helvetica, sans-serif;
+  
+  --color-theme-primary: #166534;
+  --color-theme-primary-light: #DCFCE7;
+  --color-theme-accent: #22C55E;
+  --color-theme-bg: #F7FAF5;
+  --color-theme-card: #FFFFFF;
+  --color-theme-text: #17211B;
+  --color-theme-muted: #64756A;
+  --color-theme-border: #DCE8DE;
+  --color-theme-warning: #F59E0B;
+  --color-theme-danger: #DC2626;
+}
+
+/* Perfect Dark Mode Override */
+.dark {
+  /* Theme Variables */
+  --color-theme-primary: #022C22; /* Deep dark teal/emerald for sidebar and solid buttons */
+  --color-theme-primary-light: #064E3B; /* Slightly lighter deep green for cards/accents */
+  --color-theme-accent: #059669; /* Rich, premium emerald for active buttons (matches light mode for consistency) */
+  
+  --color-theme-bg: #0B1120;
+  --color-theme-card: #111827;
+  
+  --color-theme-text: #F8FAFC;
+  --color-theme-muted: #94A3B8;
+  --color-theme-border: #1F2937;
+  
+  --color-theme-warning: #FBBF24;
+  --color-theme-danger: #F87171;
+}
+
+/* Force dark mode styles on hardcoded Tailwind classes */
+.dark .bg-white { background-color: var(--color-theme-card); border-color: var(--color-theme-border); }
+.dark .text-slate-800, .dark .text-slate-900, .dark .text-slate-700 { color: var(--color-theme-text); }
+.dark .text-slate-600, .dark .text-slate-500 { color: var(--color-theme-muted); }
+.dark .bg-slate-50, .dark .bg-slate-100 { background-color: rgba(255, 255, 255, 0.03); border-color: var(--color-theme-border); }
+.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.1); }
+.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1); }
+.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.1); }
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.1); }
+.dark .border-slate-100, .dark .border-slate-200 { border-color: var(--color-theme-border); }
+.dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.3); }
+
+*, html, body {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-theme-bg);
+  color: var(--color-theme-text);
+}
+
+/* Smooth scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; 
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}

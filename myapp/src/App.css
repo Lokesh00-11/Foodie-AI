@@ -1,0 +1,278 @@
+/* --- Global & Layout --- */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+}
+
+.home-wrapper, .app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- Header & Navigation --- */
+.header {
+  background: white;
+  padding: 15px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-nav {
+  display: flex;
+  align-items: center;
+  gap: 40px; 
+}
+
+.hi-text {
+  font-weight: bold;
+  color: #10b981;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.hi-text:hover {
+  color: #3b82f6;
+}
+
+/* --- Hero Section --- */
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.hero-quote {
+  font-size: 2.2rem;
+  font-style: italic;
+  margin-bottom: 30px;
+}
+
+/* --- Cards & Containers --- */
+.container {
+  padding: 50px 20px;
+}
+
+.card {
+  background: white;
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  max-height: none !important; 
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* --- Inputs & Selects --- */
+input, select, .login-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* --- BUTTONS: COLOR REVERSAL EFFECT --- */
+.btn-pdf, .login-submit-btn, .btn-details, .auth-btn {
+  background-color: #10b981;
+  color: white;
+  border: 2px solid #10b981;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-pdf:hover, .login-submit-btn:hover, .btn-details:hover, .auth-btn:hover {
+  background-color: white !important;
+  color: #10b981 !important;
+}
+
+/* --- LOGIN/AUTH PAGE LAYOUT --- */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  width: 100%;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  border: 1px solid #fecaca;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.link {
+  color: #3b82f6;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* --- Navigation Buttons --- */
+.btn-logout {
+  background-color: #3b82f6;
+  color: white;
+  border: 2px solid #3b82f6;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: white !important;
+  color: #3b82f6 !important;
+}
+
+.btn-home {
+  background-color: #6b7280;
+  color: white;
+  border: 2px solid #6b7280;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-home:hover {
+  background-color: white !important;
+  color: #6b7280 !important;
+}
+
+/* --- Footer --- */
+.footer {
+  background: #1f2937;
+  color: white;
+  padding: 25px 20px; 
+  text-align: center;
+  margin-top: auto; 
+  font-size: 1.1rem;
+}
+
+.footer a {
+  color: white; /* Updated from #10b981 to white */
+  text-decoration: underline; /* Added for better visibility on dark backgrounds */
+  font-weight: 600;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #10b981; /* Optional: Keep the green color for the hover state */
+}
+
+.results-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.main-title {
+  text-align: center;
+  color: #10b981;
+  font-weight: 800;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.result-day-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px; /* Large space between days */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-left: 8px solid #3b82f6;
+}
+
+.day-header {
+  color: #3b82f6;
+  font-weight: 700;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.meal-line {
+  margin: 12px 0; /* Vertical space between meals */
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #374151;
+  font-weight: 500; /* Stronger text */
+}
+
+/* Bold calories and headers within the text */
+.meal-line:contains("kcal") {
+  font-weight: 700;
+  color: #111827;
+}
