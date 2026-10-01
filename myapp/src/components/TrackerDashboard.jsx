@@ -7,7 +7,7 @@ import {
   faCalculator, faRunning, faExclamationCircle, faCheck, faLock, faClock, faLeaf, faTint, faPlus, faMinus, faFilePdf
 } from '@fortawesome/free-solid-svg-icons';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const TrackerDashboard = () => {
   const navigate = useNavigate();
@@ -29,6 +29,7 @@ const TrackerDashboard = () => {
   
   const [hasPlan, setHasPlan] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [aiAdvice, setAiAdvice] = useState("");
 
   // Calorie and meal state
   const [eatenMeals, setEatenMeals] = useState({
@@ -398,6 +399,7 @@ const TrackerDashboard = () => {
         const parsed = JSON.parse(cachedPlan);
         if (parsed.metrics) setMetrics(parsed.metrics);
         if (parsed.weekly_plan) setCurrentPlan(parsed.weekly_plan);
+        if (parsed.ai_advice) setAiAdvice(parsed.ai_advice);
       } catch(e) {}
     }
 
@@ -422,6 +424,7 @@ const TrackerDashboard = () => {
 
           if (weeklyPlanObj && Object.keys(weeklyPlanObj).length > 0) {
             setCurrentPlan(weeklyPlanObj);
+            setAiAdvice(plan.ai_advice || "");
             
             // Sync database plan to local storage activePlan
             try {
@@ -512,7 +515,7 @@ const TrackerDashboard = () => {
     doc.text(`Target Calories: ${metrics.target_cal} kcal`, 14, 54);
     
     // Macros Table
-    doc.autoTable({
+    autoTable(doc, {
       startY: 64,
       head: [['Nutrient', 'Consumed', 'Target', 'Progress']],
       body: [
@@ -815,6 +818,8 @@ const TrackerDashboard = () => {
                                 <option value="cups">cup(s)</option>
                                 <option value="bowls">bowl(s)</option>
                                 <option value="grams">gram(s)</option>
+                                <option value="glasses">glass(es)</option>
+                                <option value="ml">ml</option>
                               </select>
                             </div>
                           </div>
@@ -1096,23 +1101,32 @@ const TrackerDashboard = () => {
            </div>
 
            {/* Small steps card */}
-           <div className="bg-theme-bg rounded-3xl p-6 border border-theme-border shadow-sm">
+           <div className="bg-theme-bg rounded-3xl p-6 border border-theme-border shadow-sm flex-1 flex flex-col">
              <div className="flex items-center gap-3 mb-4">
                 <FontAwesomeIcon icon={faLeaf} className="text-2xl text-theme-primary" />
-                <h3 className="font-extrabold text-theme-text text-lg leading-tight">Quick Tips</h3>
+                <h3 className="font-extrabold text-theme-text text-lg leading-tight">AI Coach Advice</h3>
              </div>
-             <ul className="space-y-3">
-               {['Plan your meals ahead', 'Stay consistent', 'Eat whole foods'].map(item => (
-                 <li key={item} className="flex items-center gap-3 text-xs font-semibold text-theme-text">
-                    <FontAwesomeIcon icon={faCheck} className="text-white bg-theme-accent rounded-full p-0.5 text-[10px] w-3 h-3 shadow-sm" />
-                    {item}
-                 </li>
-               ))}
-             </ul>
+             
+             {aiAdvice ? (
+                <div className="flex-1 text-sm text-theme-text font-medium leading-relaxed italic bg-white p-4 rounded-2xl shadow-inner border border-slate-100">
+                  {aiAdvice}
+                </div>
+             ) : (
+                <ul className="space-y-3">
+                  {['Plan your meals ahead', 'Stay consistent', 'Eat whole foods'].map(item => (
+                    <li key={item} className="flex items-center gap-3 text-xs font-semibold text-theme-text">
+                        <FontAwesomeIcon icon={faCheck} className="text-white bg-theme-accent rounded-full p-0.5 text-[10px] w-3 h-3 shadow-sm" />
+                        {item}
+                    </li>
+                  ))}
+                </ul>
+             )}
            </div>
            
            <div className="bg-white rounded-3xl p-5 border border-theme-border shadow-sm text-center relative mt-auto">
-              <p className="italic text-theme-text font-medium text-xs z-10 relative leading-relaxed">"Good nutrition fuels a better you."</p>
+              <p className="italic text-theme-text font-medium text-xs z-10 relative leading-relaxed">
+                {aiAdvice ? "Stick to your AI goals!" : '"Good nutrition fuels a better you."'}
+              </p>
               <FontAwesomeIcon icon={faLeaf} className="absolute bottom-3 right-3 text-theme-primary-light text-xl -rotate-12" />
            </div>
         </aside>

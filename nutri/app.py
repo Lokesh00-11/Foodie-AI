@@ -60,7 +60,7 @@ with app.app_context():
     db.create_all()
 
 # ---------------- LLM CONFIGURATION ----------------
-client = genai.Client(api_key="AIzaSyAdXAPIqYKwxKar-85lznz6ecfKXGQ982Y") 
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def extract_json(text):
     text = text.strip()
@@ -92,7 +92,7 @@ def generate_ai_insights(user_profile, symptoms):
     Every single property name MUST be enclosed in double quotes. Do not use single quotes.
     """
     try:
-        response = client.models.generate_content(model='gemini-2.5-pro', contents=prompt)
+        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
         clean_text = extract_json(response.text)
         return json.loads(clean_text)
     except Exception as e:
@@ -614,7 +614,7 @@ def chat():
         User's Question: {message}
         """
 
-        response = client.models.generate_content(model='gemini-2.5-pro', contents=prompt)
+        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
         return jsonify({"success": True, "reply": response.text.strip()})
     except Exception as e:
         print("Chat coach error:", e)
@@ -649,7 +649,7 @@ def get_recipe():
         Output ONLY raw JSON. Do not wrap in markdown ```json or include any text before or after the JSON.
         """
         
-        response = client.models.generate_content(model='gemini-2.5-pro', contents=prompt)
+        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
         clean_text = extract_json(response.text)
         recipe_json = json.loads(clean_text)
         return jsonify({"success": True, "recipe": recipe_json})
@@ -777,7 +777,7 @@ def estimate_calories():
 
         CRITICAL INSTRUCTIONS: Output ONLY valid JSON. Do not include markdown formatting like ```json.
         """
-        response = client.models.generate_content(model='gemini-2.5-pro', contents=prompt)
+        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
         clean_text = extract_json(response.text)
         result = json.loads(clean_text)
         
@@ -791,12 +791,18 @@ def estimate_calories():
     except Exception as e:
         print(f"Error in estimate-calories: {e}")
         # Graceful fallback so the UI never alerts "Failed to get estimation"
+        base_cal = 1 if unit in ['ml', 'grams', 'g'] else 250
+        base_pro = 0.05 if unit in ['ml', 'grams', 'g'] else 10
+        base_carb = 0.1 if unit in ['ml', 'grams', 'g'] else 30
+        base_fat = 0.02 if unit in ['ml', 'grams', 'g'] else 5
+        
         return jsonify({
             "success": True,
-            "calories": 250,
-            "protein": 10,
-            "carbs": 30,
-            "fats": 5
+            "calories": int(base_cal * quantity),
+            "protein": int(base_pro * quantity),
+            "carbs": int(base_carb * quantity),
+            "fats": int(base_fat * quantity),
+            "error_msg": str(e)
         })
 
 def parse_meal_line(line, prefix):
