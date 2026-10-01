@@ -170,7 +170,12 @@ const AICoach = () => {
                     }`}
                   >
                     <div className="text-[14px] leading-relaxed whitespace-pre-wrap">
-                      {msg.text}
+                      {msg.text.split(/(\*\*.*?\*\*)/g).map((part, i) => {
+                        if (part.startsWith('**') && part.endsWith('**')) {
+                          return <strong key={i} className="font-extrabold text-slate-900">{part.slice(2, -2)}</strong>;
+                        }
+                        return <span key={i}>{part}</span>;
+                      })}
                     </div>
                   </div>
                   {!isAI && (

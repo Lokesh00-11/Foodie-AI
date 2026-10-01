@@ -865,9 +865,24 @@ const TrackerDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-theme-bg border border-slate-100 rounded-2xl p-4 mt-6 text-center text-xs text-theme-border font-medium">
-            Check off meals as you consume them to sync macros.
-          </div>
+          {eatenMeals.breakfast && eatenMeals.lunch && eatenMeals.snack && eatenMeals.dinner ? (
+            <div className="bg-theme-primary-light border border-theme-primary/30 rounded-2xl p-5 mt-6 text-center shadow-sm animate-fadeIn">
+              <h3 className="text-theme-primary font-black text-sm mb-2">🎉 Day Complete!</h3>
+              <p className="text-xs text-slate-700 font-medium mb-4">
+                You've logged all your meals today! You consumed a total of <strong>{consumedCalories} kcal</strong>, achieving {Math.round(calPercent * 100)}% of your target.
+              </p>
+              <button 
+                onClick={() => navigate('/coach')} 
+                className="bg-theme-primary hover:bg-emerald-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl cursor-pointer shadow-sm transition inline-flex items-center gap-2"
+              >
+                Ask AI Coach About Today
+              </button>
+            </div>
+          ) : (
+            <div className="bg-theme-bg border border-slate-100 rounded-2xl p-4 mt-6 text-center text-xs text-theme-border font-medium">
+              Check off meals as you consume them to sync macros.
+            </div>
+          )}
         </div>
 
         {/* Macro Nutrients Progress */}
