@@ -18,30 +18,30 @@
 /* Perfect Dark Mode Override */
 .dark {
   /* Theme Variables */
-  --color-theme-primary: #022C22; /* Deep dark teal/emerald for sidebar and solid buttons */
-  --color-theme-primary-light: #064E3B; /* Slightly lighter deep green for cards/accents */
-  --color-theme-accent: #059669; /* Rich, premium emerald for active buttons (matches light mode for consistency) */
+  --color-theme-primary: #0F2A1B; /* Sidebar */
+  --color-theme-primary-light: #172A20; /* Inner card */
+  --color-theme-accent: #22C55E; /* Brand Primary */
   
-  --color-theme-bg: #0B1120;
-  --color-theme-card: #111827;
+  --color-theme-bg: #0A1410; /* Page */
+  --color-theme-card: #111D17; /* Card */
   
-  --color-theme-text: #F8FAFC;
-  --color-theme-muted: #94A3B8;
-  --color-theme-border: #1F2937;
+  --color-theme-text: #EAF6EE; /* Primary text */
+  --color-theme-muted: #7C9686; /* Muted */
+  --color-theme-border: #25402F; /* Border */
   
-  --color-theme-warning: #FBBF24;
-  --color-theme-danger: #F87171;
+  --color-theme-warning: #FBBF24; /* Warning text */
+  --color-theme-danger: #F87171; /* Danger */
 }
 
 /* Force dark mode styles on hardcoded Tailwind classes */
 .dark .bg-white { background-color: var(--color-theme-card); border-color: var(--color-theme-border); }
 .dark .text-slate-800, .dark .text-slate-900, .dark .text-slate-700 { color: var(--color-theme-text); }
-.dark .text-slate-600, .dark .text-slate-500 { color: var(--color-theme-muted); }
-.dark .bg-slate-50, .dark .bg-slate-100 { background-color: rgba(255, 255, 255, 0.03); border-color: var(--color-theme-border); }
-.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.1); }
-.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1); }
-.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.1); }
-.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.1); }
+.dark .text-slate-600, .dark .text-slate-500 { color: #A9C1B2; } /* Secondary text */
+.dark .bg-slate-50, .dark .bg-slate-100 { background-color: #172A20; border-color: var(--color-theme-border); }
+.dark .bg-amber-50 { background-color: #3A2C0C; }
+.dark .bg-blue-50 { background-color: #11253F; }
+.dark .bg-emerald-50 { background-color: #172A20; }
+.dark .bg-red-50 { background-color: rgba(248, 113, 113, 0.1); }
 .dark .border-slate-100, .dark .border-slate-200 { border-color: var(--color-theme-border); }
 .dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.3); }
 

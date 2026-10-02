@@ -16,9 +16,12 @@ const InputSection = () => {
   const initialState = {
     gender: 'male', age: '', weight: '', height: '',
     goal: 'maintenance', diet_preference: 'vegetarian',
-    exercises: 'moderate', medical_condition: '', exclusions: '',
+    exercises: 'moderate', medical_condition: ['None'], exclusions: [],
     symptoms: [] 
   };
+  const [otherExclusion, setOtherExclusion] = useState("");
+  const medicalOptions = ["None", "Diabetes", "PCOS", "Thyroid", "Hypertension", "Cholesterol"];
+  const exclusionOptions = ["Milk", "Butter", "Mutton", "Peanuts", "Eggs", "Soy", "Gluten", "Seafood"];
 
   const [formData, setFormData] = useState(initialState);
 
@@ -49,6 +52,33 @@ const InputSection = () => {
       symptoms: prev.symptoms?.includes(symptom)
         ? prev.symptoms.filter(s => s !== symptom)
         : [...(prev.symptoms || []), symptom]
+    }));
+  };
+
+  const handleMedicalChange = (condition) => {
+    setFormData(prev => {
+      let newMed = prev.medical_condition || [];
+      if (condition === "None") {
+        newMed = ["None"];
+      } else {
+        newMed = newMed.filter(c => c !== "None");
+        if (newMed.includes(condition)) {
+          newMed = newMed.filter(c => c !== condition);
+        } else {
+          newMed.push(condition);
+        }
+        if (newMed.length === 0) newMed = ["None"];
+      }
+      return { ...prev, medical_condition: newMed };
+    });
+  };
+
+  const handleExclusionChange = (exclusion) => {
+    setFormData(prev => ({
+      ...prev,
+      exclusions: prev.exclusions?.includes(exclusion)
+        ? prev.exclusions.filter(e => e !== exclusion)
+        : [...(prev.exclusions || []), exclusion]
     }));
   };
 
@@ -107,6 +137,8 @@ const InputSection = () => {
         weight: parseFloat(formData.weight),
         height: parseFloat(formData.height) / 100, // Convert cm to meters for backend BMR
         symptoms: formData.symptoms.join(", "), 
+        medical_condition: (formData.medical_condition || []).join(", "),
+        exclusions: [...(formData.exclusions || []), ...(otherExclusion ? otherExclusion.split(",").map(e=>e.trim()).filter(e=>e) : [])],
         email: userEmail || "guest@example.com" 
       };
 
@@ -388,25 +420,57 @@ const InputSection = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Medical History</label>
-                  <input 
-                    type="text"
-                    placeholder="e.g. None, Diabetes"
-                    className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-4 text-sm font-bold text-slate-800 outline-none transition"
-                    value={formData.medical_condition}
-                    onChange={(e) => setFormData({ ...formData, medical_condition: e.target.value })}
-                  />
+              <div className="flex flex-col gap-4 mt-6">
+                <div>
+                  <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider block mb-2">Medical History</label>
+                  <div className="flex flex-wrap gap-2">
+                    {medicalOptions.map(option => {
+                      const isChecked = formData.medical_condition?.includes(option);
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => handleMedicalChange(option)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                            isChecked
+                              ? 'bg-theme-accent text-slate-950 shadow-md'
+                              : 'bg-theme-bg border border-slate-200 text-slate-600 hover:bg-slate-100'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Exclusions / Allergies</label>
+                
+                <div>
+                  <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider block mb-2">Exclusions / Allergies</label>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {exclusionOptions.map(option => {
+                      const isChecked = formData.exclusions?.includes(option);
+                      return (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => handleExclusionChange(option)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                            isChecked
+                              ? 'bg-theme-primary-light text-white shadow-md'
+                              : 'bg-theme-bg border border-slate-200 text-slate-600 hover:bg-slate-100'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      );
+                    })}
+                  </div>
                   <input 
                     type="text"
-                    placeholder="e.g. Milk, Peanuts"
-                    className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-4 text-sm font-bold text-slate-800 outline-none transition"
-                    value={formData.exclusions}
-                    onChange={(e) => setFormData({ ...formData, exclusions: e.target.value })}
+                    placeholder="Other exclusions (comma separated)"
+                    className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 outline-none transition"
+                    value={otherExclusion}
+                    onChange={(e) => setOtherExclusion(e.target.value)}
                   />
                 </div>
               </div>

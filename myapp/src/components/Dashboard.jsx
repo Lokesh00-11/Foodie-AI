@@ -69,21 +69,33 @@ const Dashboard = () => {
     }
   };
 
-  const parseMeals = (dayText) => {
-    if (!dayText) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
-    const extract = (type) => {
-      const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
-      const match = dayText.match(regex);
-      return match ? match[1] : "Selection pending...";
+  const parseMeals = (dayData) => {
+    if (!dayData) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
+    if (typeof dayData === 'string') {
+        const extract = (type) => {
+            const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
+            const match = dayData.match(regex);
+            return match ? match[1] : "";
+        };
+        const calorieMatch = dayData.match(/\\[CALORIE_COUNT\\]: (\d+)/);
+        return {
+            Breakfast: extract("BREAKFAST"),
+            Lunch: extract("LUNCH"),
+            Snack: extract("SNACK"),
+            Dinner: extract("DINNER"),
+            Calories: calorieMatch ? `${calorieMatch[1]} kcal` : ""
+        };
+    }
+    const formatMeal = (items) => {
+        if (!items || !Array.isArray(items)) return "";
+        return items.map(i => i.display_string || "").join(" + ");
     };
-    const calorieMatch = dayText.match(/\[CALORIE_COUNT\]: (\d+)/);
-    
     return {
-      Breakfast: extract("BREAKFAST"),
-      Lunch: extract("LUNCH"),
-      Snack: extract("SNACK"),
-      Dinner: extract("DINNER"),
-      Calories: calorieMatch ? `${calorieMatch[1]} kcal` : "Balanced"
+        Breakfast: formatMeal(dayData.breakfast),
+        Lunch: formatMeal(dayData.lunch),
+        Snack: formatMeal(dayData.snack),
+        Dinner: formatMeal(dayData.dinner),
+        Calories: dayData.day_total ? `${dayData.day_total} kcal` : ""
     };
   };
 
@@ -138,10 +150,10 @@ const Dashboard = () => {
           <div key={entry.plan_id} className="bg-theme-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl mb-4 border border-emerald-50 shadow-sm flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4 transition-all hover:shadow-md">
             <div>
               <h3 className="text-theme-text font-bold text-base sm:text-lg mb-1">Plan from {entry.created_at}</h3>
-              <span className="text-theme-primary font-extrabold text-sm sm:text-base">{entry.total_calories} kcal / Day</span>
+              <span className="text-theme-accent font-extrabold text-sm sm:text-base">{entry.total_calories} kcal / Day</span>
             </div>
             <div className="flex flex-wrap sm:flex-nowrap gap-2 sm:gap-3 w-full sm:w-auto">
-              <button className="flex-1 sm:flex-none justify-center bg-theme-primary-light text-theme-primary px-4 py-2.5 rounded-xl font-bold hover:bg-theme-primary-light hover:scale-105 hover:shadow-md hover:brightness-105 transition-all flex items-center gap-2 text-sm sm:text-base" onClick={() => viewSavedPlan(entry)}>
+              <button className="flex-1 sm:flex-none justify-center bg-theme-accent text-white px-4 py-2.5 rounded-xl font-bold hover:brightness-110 hover:scale-105 hover:shadow-md transition-all flex items-center gap-2 text-sm sm:text-base" onClick={() => viewSavedPlan(entry)}>
                 <FontAwesomeIcon icon={faEye}/> View
               </button>
               <button className="flex-1 sm:flex-none justify-center bg-blue-50 text-blue-500 px-4 py-2.5 rounded-xl font-bold hover:bg-blue-100 hover:scale-105 hover:shadow-md hover:brightness-105 transition-all flex items-center gap-2 text-sm sm:text-base" onClick={() => downloadHistoryPDF(entry)}>

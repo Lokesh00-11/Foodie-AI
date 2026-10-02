@@ -22,14 +22,60 @@ const SettingsPage = () => {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+    // Only dispatch if it's initiated by user action in this component (to avoid loops)
   }, [toggles.darkMode]);
 
+  React.useEffect(() => {
+    const handleThemeChange = () => {
+      setToggles(prev => ({ ...prev, darkMode: localStorage.getItem('theme') === 'dark' }));
+    };
+    window.addEventListener("themeUpdated", handleThemeChange);
+    return () => window.removeEventListener("themeUpdated", handleThemeChange);
+  }, []);
+
   const handleToggle = (key) => {
-    setToggles(prev => ({ ...prev, [key]: !prev[key] }));
+    if (key === 'pushNotifications' && !toggles.pushNotifications) {
+      if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            setToggles(prev => ({ ...prev, pushNotifications: true }));
+            alert("Push notifications enabled!");
+          } else {
+            alert("Permission for notifications was denied.");
+          }
+        });
+        return;
+      } else {
+        alert("This browser does not support desktop notifications.");
+        return;
+      }
+    }
+
+    setToggles(prev => {
+      const newState = !prev[key];
+      if (key === 'darkMode') {
+        localStorage.setItem('theme', newState ? 'dark' : 'light');
+        window.dispatchEvent(new Event("themeUpdated"));
+      }
+      return { ...prev, [key]: newState };
+    });
   };
 
   const handleDataAction = (action) => {
-    alert(`This action (${action}) is simulated for the frontend demonstration.`);
+    if (action === 'Export Data') {
+      const data = JSON.stringify(localStorage);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `foodie_ai_export_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else {
+      alert(`This action (${action}) is simulated for the frontend demonstration.`);
+    }
   };
 
   return (
@@ -133,12 +179,23 @@ const SettingsPage = () => {
           
           <div className="space-y-4 flex-1 flex flex-col justify-between">
              <div className="space-y-3">
-               <button onClick={() => handleDataAction('Change Password')} className="w-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold py-2.5 rounded-xl text-sm transition-colors">
-                  Change Password
-               </button>
-               <button onClick={() => handleDataAction('Setup 2FA')} className="w-full bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold py-2.5 rounded-xl text-sm transition-colors">
-                  Enable Two-Factor Auth
-               </button>
+               <div className="relative group w-full">
+                 <button disabled className="w-full bg-slate-50 border border-slate-200 text-slate-400 font-bold py-2.5 rounded-xl text-sm cursor-not-allowed">
+                    Change Password
+                 </button>
+                 <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2 hidden group-hover:block w-auto bg-slate-800 text-white text-[10px] rounded px-2 py-1 shadow-lg whitespace-nowrap">
+                   Coming soon
+                 </span>
+               </div>
+               
+               <div className="relative group w-full">
+                 <button disabled className="w-full bg-slate-50 border border-slate-200 text-slate-400 font-bold py-2.5 rounded-xl text-sm cursor-not-allowed">
+                    Enable Two-Factor Auth
+                 </button>
+                 <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2 hidden group-hover:block w-auto bg-slate-800 text-white text-[10px] rounded px-2 py-1 shadow-lg whitespace-nowrap">
+                   Coming soon
+                 </span>
+               </div>
              </div>
 
              <div className="pt-4 border-t border-red-100 mt-6">

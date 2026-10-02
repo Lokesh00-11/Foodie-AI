@@ -259,7 +259,6 @@ input:focus, select:focus {
   border-bottom: 2px solid #f1f5f9;
   padding-bottom: 10px;
   margin-bottom: 20px;
-  text-transform: uppercase;
   letter-spacing: 1px;
 }
 

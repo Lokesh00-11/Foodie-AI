@@ -310,21 +310,33 @@ const ResultPage = () => {
     a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
   );
 
-  const parseMeals = (dayText) => {
-    if (!dayText) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
-    const extract = (type) => {
-      const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
-      const match = dayText.match(regex);
-      return match ? match[1] : "Selection pending...";
+  const parseMeals = (dayData) => {
+    if (!dayData) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
+    if (typeof dayData === 'string') {
+        const extract = (type) => {
+            const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
+            const match = dayData.match(regex);
+            return match ? match[1] : "";
+        };
+        const calorieMatch = dayData.match(/\\[CALORIE_COUNT\\]: (\d+)/);
+        return {
+            Breakfast: extract("BREAKFAST"),
+            Lunch: extract("LUNCH"),
+            Snack: extract("SNACK"),
+            Dinner: extract("DINNER"),
+            Calories: calorieMatch ? `${calorieMatch[1]} kcal` : ""
+        };
+    }
+    const formatMeal = (items) => {
+        if (!items || !Array.isArray(items)) return "";
+        return items.map(i => i.display_string || "").join(" + ");
     };
-    const calorieMatch = dayText.match(/\[CALORIE_COUNT\]: (\d+)/);
-    
     return {
-      Breakfast: extract("BREAKFAST"),
-      Lunch: extract("LUNCH"),
-      Snack: extract("SNACK"),
-      Dinner: extract("DINNER"),
-      Calories: calorieMatch ? `${calorieMatch[1]} kcal` : "Balanced"
+        Breakfast: formatMeal(dayData.breakfast),
+        Lunch: formatMeal(dayData.lunch),
+        Snack: formatMeal(dayData.snack),
+        Dinner: formatMeal(dayData.dinner),
+        Calories: dayData.day_total ? `${dayData.day_total} kcal` : ""
     };
   };
 

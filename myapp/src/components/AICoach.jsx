@@ -10,7 +10,7 @@ const AICoach = () => {
   const [messages, setMessages] = useState([
     {
       role: 'model',
-      text: "Welcome to the Clinical Wellness & Nutrition portal. I am your health advisor assistant. You can inquire about caloric calculations, metabolic guidelines, dietary symptom recovery plans, or macro planning. How can I assist you today?"
+      text: "Welcome to the Wellness & Nutrition portal. I am your health advisor assistant. You can inquire about caloric calculations, metabolic guidelines, dietary symptom recovery plans, or macro planning. How can I assist you today?"
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -88,10 +88,9 @@ const AICoach = () => {
           </div>
           <div>
             <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
-              Clinical Health Assistant
-              <span className="text-[10px] bg-theme-primary-light text-theme-primary font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Verified Engine</span>
+              Wellness & Nutrition Assistant
             </h2>
-            <p className="text-xs text-theme-muted font-semibold uppercase tracking-wider">Gemini Metabolic Diagnostic Coach</p>
+            <p className="text-xs text-theme-muted font-semibold uppercase tracking-wider">Metabolic Diagnostic Coach</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -112,9 +111,9 @@ const AICoach = () => {
             <div className="flex items-start gap-3">
               <FontAwesomeIcon icon={faInfoCircle} className="text-theme-accent text-lg mt-0.5 shrink-0" />
               <div>
-                <h4 className="text-xs font-black uppercase tracking-wider text-theme-accent">Clinical Disclaimer & Safety Instructions</h4>
+                <h4 className="text-xs font-black uppercase tracking-wider text-theme-accent">Disclaimer & Safety Instructions</h4>
                 <p className="text-xs font-semibold leading-relaxed mt-1 text-theme-muted">
-                  This health assistant delivers evidence-based metabolic and dietary guidelines based on BMR, TDEE, and symptoms. It does not replace medical advice, diagnostics, or treatments. Consult a primary care physician before modifying clinical healthcare regimens.
+                  This health assistant delivers evidence-based metabolic and dietary guidelines based on BMR, TDEE, and symptoms. It does not replace medical advice, diagnostics, or treatments. Consult a primary care physician before modifying clinical healthcare regimens. Seek a doctor immediately for severe or persistent symptoms.
                 </p>
               </div>
             </div>
@@ -128,7 +127,7 @@ const AICoach = () => {
                 {clinicalQueries.map((q, idx) => (
                   <button
                     key={idx}
-                    onClick={() => handleSendMessage(q.query)}
+                    onClick={() => setInputText(q.query)}
                     className="bg-theme-card hover:bg-slate-100/50 border border-slate-200 hover:border-emerald-500/50 text-left p-5 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between h-40 group shadow-sm"
                   >
                     <div>

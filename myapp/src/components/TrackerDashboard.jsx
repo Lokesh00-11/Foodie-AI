@@ -104,30 +104,51 @@ const TrackerDashboard = () => {
     return { status: 'closed', label: 'Closed', time: '' };
   };
 
-  const parseMeals = (dayText) => {
-    if (!dayText) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
-    const extract = (type) => {
-      const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
-      const match = dayText.match(regex);
-      return match ? match[1] : "";
+  const parseMeals = (dayData) => {
+    if (!dayData) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
+    if (typeof dayData === 'string') {
+        const extract = (type) => {
+            const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
+            const match = dayData.match(regex);
+            return match ? match[1] : "";
+        };
+        const calorieMatch = dayData.match(/\\[CALORIE_COUNT\\]: (\d+)/);
+        return {
+            Breakfast: extract("BREAKFAST"),
+            Lunch: extract("LUNCH"),
+            Snack: extract("SNACK"),
+            Dinner: extract("DINNER"),
+            Calories: calorieMatch ? `${calorieMatch[1]} kcal` : ""
+        };
+    }
+    const formatMeal = (items) => {
+        if (!items || !Array.isArray(items)) return "";
+        return items.map(i => i.display_string || "").join(" + ");
     };
-    const calorieMatch = dayText.match(/\[CALORIE_COUNT\]: (\d+)/);
     return {
-      Breakfast: extract("BREAKFAST"),
-      Lunch: extract("LUNCH"),
-      Snack: extract("SNACK"),
-      Dinner: extract("DINNER"),
-      Calories: calorieMatch ? `${calorieMatch[1]} kcal` : ""
+        Breakfast: formatMeal(dayData.breakfast),
+        Lunch: formatMeal(dayData.lunch),
+        Snack: formatMeal(dayData.snack),
+        Dinner: formatMeal(dayData.dinner),
+        Calories: dayData.day_total ? `${dayData.day_total} kcal` : ""
     };
   };
 
   const extractCalorie = (foodStr, defaultVal) => {
     if (!foodStr) return defaultVal;
-    const match = foodStr.match(/\((\d+)\s*kcal\)/i);
-    return match ? parseInt(match[1]) : defaultVal;
+    let total = 0;
+    const regex = /\((\d+)\s*kcal\)/gi;
+    let match;
+    let found = false;
+    while ((match = regex.exec(foodStr)) !== null) {
+      total += parseInt(match[1], 10);
+      found = true;
+    }
+    return found ? total : defaultVal;
   };
   const [customMealName, setCustomMealName] = useState("");
   const [customMealCal, setCustomMealCal] = useState("");
+  const [customMealMacros, setCustomMealMacros] = useState(null);
   const [customMealQty, setCustomMealQty] = useState("1");
   const [customMealUnit, setCustomMealUnit] = useState("pieces");
   const [replanSuccessAlert, setReplanSuccessAlert] = useState(false);
@@ -149,6 +170,12 @@ const TrackerDashboard = () => {
       });
       if (res.data.success) {
         setCustomMealCal(res.data.calories);
+        setCustomMealMacros({
+          p: res.data.protein || 0,
+          c: res.data.carbs || 0,
+          f: res.data.fats || 0,
+          fi: 0, v: 0, ca: 0, fe: 0
+        });
       } else {
         alert("Failed to get estimation. Enter manually.");
       }
@@ -259,25 +286,13 @@ const TrackerDashboard = () => {
 
     if (customMeals.breakfast) {
       splits.breakfast = customMeals.breakfast.calories;
-      const remaining = Math.max(100, target - splits.breakfast);
-      splits.lunch = Math.round(remaining * (0.35 / 0.75));
-      splits.snack = Math.round(remaining * (0.15 / 0.75));
-      splits.dinner = Math.round(remaining * (0.25 / 0.75));
     }
-
     if (customMeals.lunch) {
       splits.lunch = customMeals.lunch.calories;
-      const remaining = Math.max(100, target - splits.breakfast - splits.lunch);
-      splits.snack = Math.round(remaining * (0.15 / 0.40));
-      splits.dinner = Math.round(remaining * (0.25 / 0.40));
     }
-
     if (customMeals.snack) {
       splits.snack = customMeals.snack.calories;
-      const remaining = Math.max(100, target - splits.breakfast - splits.lunch - splits.snack);
-      splits.dinner = remaining;
     }
-
     if (customMeals.dinner) {
       splits.dinner = customMeals.dinner.calories;
     }
@@ -285,34 +300,61 @@ const TrackerDashboard = () => {
     return splits;
   })();
 
-  // Targets for micro nutrients
-  const microTargets = {
-    fiber: Math.round((metrics.target_cal / 1000) * 14),
-    iron: metrics.gender === 'female' ? 18 : 8,
-    calcium: 1000,
-    vitaminC: metrics.gender === 'female' ? 75 : 90
+  const extractMacros = (foodStr) => {
+    if (!foodStr) return { p: 0, c: 0, f: 0, fi: 0, v: 0, ca: 0, fe: 0 };
+    const regex = /P:(\d+)\s+C:(\d+)\s+F:(\d+)\s+Fi:(\d+)\s+V:(\d+)\s+Ca:(\d+)\s+Fe:([\d.]+)/gi;
+    let match;
+    let res = { p: 0, c: 0, f: 0, fi: 0, v: 0, ca: 0, fe: 0 };
+    let found = false;
+    while ((match = regex.exec(foodStr)) !== null) {
+        res.p += parseInt(match[1], 10);
+        res.c += parseInt(match[2], 10);
+        res.f += parseInt(match[3], 10);
+        res.fi += parseInt(match[4], 10);
+        res.v += parseInt(match[5], 10);
+        res.ca += parseInt(match[6], 10);
+        res.fe += parseFloat(match[7]);
+        found = true;
+    }
+    if (found) return { ...res, fe: parseFloat(res.fe.toFixed(1)) };
+    // Fallback if not found (e.g. custom meal without macros)
+    const cal = extractCalorie(foodStr, 0);
+    return {
+      p: Math.round((cal * 0.25) / 4),
+      c: Math.round((cal * 0.50) / 4),
+      f: Math.round((cal * 0.25) / 9),
+      fi: Math.round(cal * 0.015),
+      v: Math.round(cal * 0.035),
+      ca: Math.round(cal * 0.4),
+      fe: Math.round(cal * 0.005 * 10) / 10
+    };
   };
 
+  const todayParsed2 = currentPlan ? parseMeals(currentPlan[getTodayDayKey()]) : { Breakfast: "", Lunch: "", Snack: "", Dinner: "" };
+  const mealMacros = {
+    breakfast: extractMacros(todayParsed2.Breakfast),
+    lunch: extractMacros(todayParsed2.Lunch),
+    snack: extractMacros(todayParsed2.Snack),
+    dinner: extractMacros(todayParsed2.Dinner)
+  };
+  
+  if (customMeals.breakfast?.macros) mealMacros.breakfast = customMeals.breakfast.macros;
+  if (customMeals.lunch?.macros) mealMacros.lunch = customMeals.lunch.macros;
+  if (customMeals.snack?.macros) mealMacros.snack = customMeals.snack.macros;
+  if (customMeals.dinner?.macros) mealMacros.dinner = customMeals.dinner.macros;
+
+  const microTargets = { fiber: 30, vitaminC: 90, calcium: 1000, iron: 18 };
   const consumedMicros = {
-    fiber: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round(mealCalorieSplits[meal] * 0.015) : 0);
-    }, 0),
-    iron: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round(mealCalorieSplits[meal] * 0.005 * 10) / 10 : 0);
-    }, 0),
-    calcium: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round(mealCalorieSplits[meal] * 0.4) : 0);
-    }, 0),
-    vitaminC: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round(mealCalorieSplits[meal] * 0.035) : 0);
-    }, 0)
+    fiber: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].fi : 0), 0),
+    iron: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].fe : 0), 0),
+    calcium: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].ca : 0), 0),
+    vitaminC: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].v : 0), 0)
   };
 
   const consumedCalories = Object.keys(eatenMeals).reduce((total, meal) => {
     return total + (eatenMeals[meal] ? mealCalorieSplits[meal] : 0);
   }, 0);
 
-  // Targets for macros (Protein 25%, Carbs 50%, Fats 25%)
   const macroTargets = {
     protein: Math.round((metrics.target_cal * 0.25) / 4),
     carbs: Math.round((metrics.target_cal * 0.50) / 4),
@@ -320,15 +362,9 @@ const TrackerDashboard = () => {
   };
 
   const consumedMacros = {
-    protein: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round((mealCalorieSplits[meal] * 0.25) / 4) : 0);
-    }, 0),
-    carbs: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round((mealCalorieSplits[meal] * 0.50) / 4) : 0);
-    }, 0),
-    fats: Object.keys(eatenMeals).reduce((total, meal) => {
-      return total + (eatenMeals[meal] ? Math.round((mealCalorieSplits[meal] * 0.25) / 9) : 0);
-    }, 0)
+    protein: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].p : 0), 0),
+    carbs: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].c : 0), 0),
+    fats: Object.keys(eatenMeals).reduce((total, meal) => total + (eatenMeals[meal] ? mealMacros[meal].f : 0), 0)
   };
 
   const handleLogCustomMeal = async (mealKey) => {
@@ -345,13 +381,18 @@ const TrackerDashboard = () => {
         meal_type: mealKey,
         custom_name: customMealName,
         custom_calories: parseInt(customMealCal),
+        custom_macros: customMealMacros,
         diet_preference: dietPref,
         exclusions: exclusions
       };
 
       const res = await axios.post(`http://${window.location.hostname}:5000/api/replan-remaining`, payload);
       if (res.data.success) {
-        const mealData = { name: customMealName, calories: parseInt(customMealCal) };
+        const mealData = { 
+          name: customMealName, 
+          calories: parseInt(customMealCal),
+          macros: customMealMacros 
+        };
         const today = new Date().toISOString().split('T')[0];
         
         const updatedCustomMeals = { ...customMeals, [mealKey]: mealData };
@@ -389,6 +430,7 @@ const TrackerDashboard = () => {
     setCustomMeals(updatedCustomMeals);
     setCustomMealName("");
     setCustomMealCal("");
+    setCustomMealMacros(null);
   };
 
   useEffect(() => {
@@ -567,7 +609,7 @@ const TrackerDashboard = () => {
                        <span>Open Diet Planner</span>
                        <FontAwesomeIcon icon={faArrowRight} />
                    </button>
-                   <button onClick={generatePDF} className="bg-white text-theme-primary hover:bg-slate-50 font-bold px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm border border-slate-200 transition-all cursor-pointer">
+                   <button onClick={generatePDF} className="bg-slate-50 text-slate-800 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm border border-slate-200 dark:border-slate-600 transition-all cursor-pointer">
                        <FontAwesomeIcon icon={faFilePdf} />
                        <span className="hidden sm:inline">Export PDF Report</span>
                        <span className="sm:hidden">Export</span>
@@ -601,7 +643,7 @@ const TrackerDashboard = () => {
               <p className="text-xs text-slate-600 mt-0.5">The remaining meals for today (Lunch, Snack, Dinner) have been automatically re-planned to balance your daily budget.</p>
             </div>
           </div>
-          <button onClick={() => setReplanSuccessAlert(false)} className="text-theme-primary hover:text-theme-primary font-extrabold text-xs px-2 py-1 cursor-pointer">Dismiss</button>
+          <button onClick={() => setReplanSuccessAlert(false)} className="text-theme-primary dark:text-emerald-500 hover:text-emerald-600 font-extrabold text-xs px-2 py-1 cursor-pointer">Dismiss</button>
         </div>
       )}
 
@@ -639,7 +681,7 @@ const TrackerDashboard = () => {
             </div>
           </div>
 
-          <div className="flex gap-2 mt-8 w-full border-t border-slate-100 pt-6">
+          <div className="flex gap-2 mt-4 w-full border-t border-slate-100 pt-4">
             <div className="flex-1 text-center">
               <div className="text-xs text-theme-muted font-bold uppercase tracking-wider">Remaining</div>
               <div className="text-lg font-extrabold text-slate-700 mt-1">
@@ -649,7 +691,7 @@ const TrackerDashboard = () => {
             <div className="w-[1px] bg-slate-100 h-10"></div>
             <div className="flex-1 text-center">
               <div className="text-xs text-theme-muted font-bold uppercase tracking-wider">Progress</div>
-              <div className="text-lg font-extrabold text-theme-primary mt-1">
+              <div className="text-lg font-extrabold text-slate-700 mt-1">
                 {Math.round(calPercent * 100)}%
               </div>
             </div>
@@ -663,7 +705,7 @@ const TrackerDashboard = () => {
               <h2 className="text-lg font-extrabold text-slate-800">Today's Meal Logger</h2>
               <button 
                 onClick={() => navigate('/results', { state: { highlightDay: getTodayDayKey() } })}
-                className="text-xs text-emerald-650 hover:text-theme-primary font-bold flex items-center gap-1.5 bg-theme-primary-light/50 px-3 py-1.5 rounded-xl border border-theme-border hover:border-theme-border transition cursor-pointer"
+                className="text-xs text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 bg-emerald-50 dark:bg-slate-800/80 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-slate-600 hover:bg-emerald-100 dark:hover:bg-slate-700 transition cursor-pointer"
                 title="View this day in Weekly Plan"
               >
                 <span>Weekly Plan</span>
@@ -688,8 +730,8 @@ const TrackerDashboard = () => {
                       className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 ${
                         !isOpen
                           ? isChecked
-                            ? 'bg-theme-primary-light/20 border-theme-border text-theme-border opacity-60 cursor-not-allowed'
-                            : 'bg-theme-bg/20 border-slate-100 text-theme-muted opacity-55 cursor-not-allowed'
+                            ? 'bg-theme-primary-light/20 border-theme-border/80 text-theme-border opacity-80 cursor-not-allowed'
+                            : 'bg-slate-50 border-slate-300 text-slate-700 opacity-90 cursor-not-allowed'
                           : isChecked 
                             ? 'bg-theme-primary-light/50 border-theme-border/80 text-slate-800 cursor-pointer hover:shadow-sm' 
                             : 'bg-theme-bg/50 border-slate-200/60 hover:bg-slate-100/30 text-slate-600 cursor-pointer'
@@ -709,12 +751,12 @@ const TrackerDashboard = () => {
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold capitalize">{meal}</span>
                             {timeInfo.status === 'open' || unlockedMeals[meal] ? (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-theme-primary-light text-theme-primary">
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-theme-primary-light dark:bg-emerald-900/50 text-theme-primary dark:text-emerald-400">
                                 <span className="w-1 h-1 rounded-full bg-theme-accent mr-1 animate-pulse"></span>
                                 {unlockedMeals[meal] ? 'Unlocked' : 'Active'}
                               </span>
                             ) : timeInfo.status === 'future' ? (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-600 border border-amber-100">
+                              <span title={`Unlocks during ${timeInfo.time} (${timeInfo.label})`} className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200 cursor-help">
                                 <FontAwesomeIcon icon={faLock} className="mr-1 text-[8px]" />
                                 Locked
                               </span>
@@ -739,7 +781,7 @@ const TrackerDashboard = () => {
                           )}
                         </div>
                       </div>
-                      <span className={`text-xs font-extrabold ${isChecked ? 'text-theme-primary' : 'text-theme-muted'}`}>
+                      <span className={`text-xs font-extrabold ${isChecked ? 'text-theme-primary dark:text-emerald-500' : 'text-theme-muted'}`}>
                         +{mealCalorieSplits[meal]} kcal
                       </span>
                     </button>
@@ -774,7 +816,7 @@ const TrackerDashboard = () => {
                                 setCustomMealUnit("pieces");
                               }
                             }}
-                            className="text-left text-xs text-theme-primary hover:text-theme-primary font-extrabold flex items-center gap-1.5 cursor-pointer mt-1"
+                            className="text-left text-xs text-emerald-600 dark:text-emerald-600 font-extrabold flex items-center gap-1.5 cursor-pointer mt-1"
                           >
                             🍽️ Ate a different {meal}?
                           </button>
@@ -827,7 +869,7 @@ const TrackerDashboard = () => {
                             type="button"
                             onClick={handleEstimateCalories}
                             disabled={estimatingLoading || !customMealName}
-                            className="w-full bg-theme-primary-light text-theme-primary hover:bg-theme-primary-light disabled:opacity-50 text-[10px] font-black py-2 rounded-xl border border-theme-border cursor-pointer transition flex items-center justify-center gap-1.5"
+                            className="w-full bg-theme-primary-light dark:bg-emerald-900/50 text-theme-primary dark:text-emerald-400 hover:bg-theme-primary-light disabled:opacity-50 text-[10px] font-black py-2 rounded-xl border border-theme-border dark:border-emerald-800 cursor-pointer transition flex items-center justify-center gap-1.5"
                           >
                             {estimatingLoading ? 'Calculating...' : '⚡ Get AI Calorie Estimate'}
                           </button>
@@ -867,7 +909,7 @@ const TrackerDashboard = () => {
 
           {eatenMeals.breakfast && eatenMeals.lunch && eatenMeals.snack && eatenMeals.dinner ? (
             <div className="bg-theme-primary-light border border-theme-primary/30 rounded-2xl p-5 mt-6 text-center shadow-sm animate-fadeIn">
-              <h3 className="text-theme-primary font-black text-sm mb-2">🎉 Day Complete!</h3>
+              <h3 className="text-theme-primary dark:text-emerald-500 font-black text-sm mb-2">🎉 Day Complete!</h3>
               <p className="text-xs text-slate-700 font-medium mb-4">
                 You've logged all your meals today! You consumed a total of <strong>{consumedCalories} kcal</strong>, achieving {Math.round(calPercent * 100)}% of your target.
               </p>
@@ -879,7 +921,7 @@ const TrackerDashboard = () => {
               </button>
             </div>
           ) : (
-            <div className="bg-theme-bg border border-slate-100 rounded-2xl p-4 mt-6 text-center text-xs text-theme-border font-medium">
+            <div className="bg-theme-bg border border-slate-100 dark:border-slate-800 rounded-2xl p-4 mt-6 text-center text-xs text-slate-500 dark:text-slate-400 font-medium">
               Check off meals as you consume them to sync macros.
             </div>
           )}
@@ -996,7 +1038,7 @@ const TrackerDashboard = () => {
                 <div className="flex justify-between text-xs font-extrabold">
                   <span className="text-slate-600 uppercase tracking-wider text-[11px]">Iron</span>
                   <span className="text-theme-muted uppercase tracking-wide text-[11px]">
-                    <strong className="text-slate-700 font-black">{consumedMicros.iron.toFixed(1)}mg</strong> / {microTargets.iron}mg
+                    <strong className="text-slate-700 font-black">{Math.round(consumedMicros.iron)}mg</strong> / {Math.round(microTargets.iron)}mg
                   </span>
                 </div>
                 <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
@@ -1009,7 +1051,7 @@ const TrackerDashboard = () => {
             </div>
           </div>
 
-          <div className="mt-8 flex items-center justify-between text-xs font-bold text-theme-border bg-theme-bg/50 p-4 border border-slate-100 rounded-2xl">
+          <div className="mt-8 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 bg-theme-bg/50 p-4 border border-slate-100 dark:border-slate-800 rounded-2xl">
             <span>Fat (9 kcal/g)</span>
             <span>Carbs/Protein (4 kcal/g)</span>
           </div>
@@ -1022,33 +1064,33 @@ const TrackerDashboard = () => {
         <h2 className="text-lg font-extrabold text-slate-800 mb-6">Your Diagnostic Baseline</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-theme-bg/50 border border-slate-100 rounded-2xl p-4 flex items-center gap-3">
-            <FontAwesomeIcon icon={faWeight} className="text-theme-accent text-lg bg-theme-primary-light p-2.5 rounded-xl" />
+            <FontAwesomeIcon icon={faWeight} className="text-theme-accent dark:text-emerald-400 text-lg bg-theme-primary-light dark:bg-emerald-900/50 p-2.5 rounded-xl" />
             <div>
               <div className="text-theme-muted text-xs font-bold uppercase tracking-wider">Weight</div>
               <div className="text-slate-800 text-sm font-extrabold mt-0.5">{metrics.weight} kg</div>
             </div>
           </div>
           <div className="bg-theme-bg/50 border border-slate-100 rounded-2xl p-4 flex items-center gap-3">
-            <FontAwesomeIcon icon={faRulerVertical} className="text-theme-accent text-lg bg-theme-primary-light p-2.5 rounded-xl" />
+            <FontAwesomeIcon icon={faRulerVertical} className="text-theme-accent dark:text-emerald-400 text-lg bg-theme-primary-light dark:bg-emerald-900/50 p-2.5 rounded-xl" />
             <div>
-              <div className="text-theme-muted text-xs font-bold uppercase tracking-wider">Height</div>
+              <div className="text-theme-muted text-xs font-bold uppercase tracking-wider">BMI</div>
               <div className="text-slate-800 text-sm font-extrabold mt-0.5">
-                {metrics.height ? (metrics.height < 10 ? Math.round(metrics.height * 100) : Math.round(metrics.height)) : "--"} cm
+                {metrics.weight && metrics.height ? (metrics.weight / ((metrics.height > 10 ? metrics.height / 100 : metrics.height) ** 2)).toFixed(1) : "--"}
               </div>
             </div>
           </div>
           <div className="bg-theme-bg/50 border border-slate-100 rounded-2xl p-4 flex items-center gap-3">
-            <FontAwesomeIcon icon={faCalculator} className="text-theme-accent text-lg bg-theme-primary-light p-2.5 rounded-xl" />
+            <FontAwesomeIcon icon={faCalculator} className="text-theme-accent dark:text-emerald-400 text-lg bg-theme-primary-light dark:bg-emerald-900/50 p-2.5 rounded-xl" />
             <div>
               <div className="text-theme-muted text-xs font-bold uppercase tracking-wider">BMR</div>
               <div className="text-slate-800 text-sm font-extrabold mt-0.5">{metrics.bmr} kcal</div>
             </div>
           </div>
           <div className="bg-theme-bg/50 border border-slate-100 rounded-2xl p-4 flex items-center gap-3">
-            <FontAwesomeIcon icon={faRunning} className="text-theme-accent text-lg bg-theme-primary-light p-2.5 rounded-xl" />
+            <FontAwesomeIcon icon={faRunning} className="text-theme-accent dark:text-emerald-400 text-lg bg-theme-primary-light dark:bg-emerald-900/50 p-2.5 rounded-xl" />
             <div>
-              <div className="text-theme-muted text-xs font-bold uppercase tracking-wider">TDEE</div>
-              <div className="text-slate-800 text-sm font-extrabold mt-0.5">{metrics.tdee} kcal</div>
+              <div className="text-theme-muted text-xs font-bold uppercase tracking-wider">TDEE - 500</div>
+              <div className="text-slate-800 text-sm font-extrabold mt-0.5">{metrics.tdee ? metrics.tdee - 500 : "--"} kcal</div>
             </div>
           </div>
         </div>
@@ -1083,7 +1125,7 @@ const TrackerDashboard = () => {
                <FontAwesomeIcon icon={faTint} className="text-2xl" />
              </div>
              <h3 className="font-extrabold text-slate-800 text-lg">Hydration Tracker</h3>
-             <p className="text-xs text-theme-muted font-semibold mb-6">Daily Goal: 8 Glasses (2L)</p>
+             <p className="text-xs text-theme-muted font-semibold mb-6">Daily Goal: 8 Glasses (1 Glass = 250ml)</p>
              
              <div className="flex items-center gap-6 mb-6">
                <button onClick={removeWater} className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center transition-colors cursor-pointer">
@@ -1102,7 +1144,7 @@ const TrackerDashboard = () => {
              {/* Visual Glasses */}
              <div className="grid grid-cols-4 gap-4 mt-4 mb-2 mx-auto w-fit">
                {[...Array(8)].map((_, i) => (
-                 <div key={i} className={`relative w-7 h-9 rounded-b-[10px] border-x-2 border-b-2 overflow-hidden shadow-[inset_0_0_6px_rgba(0,0,0,0.05)] flex items-end transition-colors ${i < waterGlasses ? 'border-blue-300' : 'border-theme-border bg-theme-bg/50'}`}>
+                 <div key={i} className={`relative w-7 h-9 rounded-b-[10px] border-x-2 border-b-2 overflow-hidden shadow-[inset_0_0_6px_rgba(0,0,0,0.05)] flex items-end transition-colors ${i < waterGlasses ? 'border-blue-300' : 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'}`}>
                    {/* Water Fill */}
                    <div className={`absolute bottom-0 w-full transition-all duration-500 ease-in-out ${i < waterGlasses ? 'h-full bg-gradient-to-t from-blue-600 via-blue-400 to-cyan-300' : 'h-0'}`}>
                      {/* Water Surface reflection */}
@@ -1118,7 +1160,7 @@ const TrackerDashboard = () => {
            {/* Small steps card */}
            <div className="bg-theme-bg rounded-3xl p-6 border border-theme-border shadow-sm flex-1 flex flex-col">
              <div className="flex items-center gap-3 mb-4">
-                <FontAwesomeIcon icon={faLeaf} className="text-2xl text-theme-primary" />
+                <FontAwesomeIcon icon={faLeaf} className="text-2xl text-theme-primary dark:text-emerald-500" />
                 <h3 className="font-extrabold text-theme-text text-lg leading-tight">AI Coach Advice</h3>
              </div>
              

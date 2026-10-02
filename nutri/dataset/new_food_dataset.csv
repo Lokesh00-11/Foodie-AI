@@ -1,0 +1,242 @@
+base_name,display_name,category,kcal_per_100g,protein_per_100g,carbs_per_100g,fat_per_100g,fiber_per_100g,vitC_mg_per_100g,calcium_mg_per_100g,iron_mg_per_100g,serving_g,ingredients,verified,source
+Idli Sambar,Idli Sambar,breakfast,140.0,4.0,30.0,0.5,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Dosa,Dosa,breakfast,175.0,4.0,32.0,3.5,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Masala Dosa,Masala Dosa,breakfast,175.0,4.0,32.0,3.5,2.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Poha,Poha,breakfast,180.0,4.0,30.0,5.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Upma,Upma,breakfast,190.0,5.0,25.0,6.0,2.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Vegetable Uttapam,Vegetable Uttapam,breakfast,200.0,6.0,35.0,4.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Oats Porridge,Oats Porridge,breakfast,150.0,5.0,27.0,3.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Paratha,Paneer Paratha,breakfast,150.0,5.6,17.8,6.1,1.7,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Aloo Paratha,Aloo Paratha,breakfast,275.0,5.0,40.0,10.0,2.1,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Bread Butter,Bread Butter,breakfast,150.0,3.3,17.0,7.8,0.7,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Bread Omelette,Bread Omelette,breakfast,150.0,7.5,15.0,7.5,0.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Boiled Eggs,Boiled Eggs,breakfast,155.0,13.0,1.1,10.6,0.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Masala Omelette,Masala Omelette,breakfast,200.0,15.0,4.0,14.0,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fruit Bowl,Fruit Bowl,breakfast,120.0,2.0,30.0,0.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Sprouts Salad,Sprouts Salad,breakfast,160.0,10.0,20.0,3.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Moong Dal Chilla,Moong Dal Chilla,breakfast,190.0,9.0,26.0,5.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Thepla,Thepla,breakfast,150.0,4.3,21.4,5.0,2.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Poori Bhaji,Poori Bhaji,breakfast,150.0,2.8,19.7,6.6,1.9,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Rava Idli,Rava Idli,breakfast,140.0,4.0,30.0,0.5,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Curd Rice,Curd Rice,breakfast,200.0,6.0,28.0,5.0,1.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Vegetable Sandwich,Vegetable Sandwich,breakfast,150.0,4.8,21.8,4.8,2.7,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Avocado Toast,Avocado Toast,breakfast,150.0,3.8,17.5,7.5,4.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Besan Toast,Besan Toast,breakfast,150.0,6.4,17.9,5.0,2.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pancakes,Pancakes,breakfast,150.0,3.6,22.8,4.8,1.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Smoothie Banana,Smoothie Banana,breakfast,150.0,2.9,25.0,2.9,2.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Smoothie Mixed Fruit,Smoothie Mixed Fruit,breakfast,190.0,3.0,34.0,3.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Protein Shake,Protein Shake,breakfast,167.0,20.0,15.0,3.0,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Poha,Vegetable Poha,breakfast,170.0,4.0,28.0,4.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chia Pudding,Chia Pudding,breakfast,180.0,6.0,22.0,7.0,6.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Ragi Dosa,Ragi Dosa,breakfast,175.0,4.0,32.0,3.5,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Ragi Malt,Ragi Malt,breakfast,160.0,4.0,28.0,2.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pesarattu,Pesarattu,breakfast,150.0,7.1,20.0,3.6,3.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Upma,Vegetable Upma,breakfast,200.0,6.0,26.0,6.0,3.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Paneer Toast,Paneer Toast,breakfast,150.0,5.8,16.2,8.1,1.2,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Cheese Omelette,Cheese Omelette,breakfast,150.0,10.0,2.5,11.2,0.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Idiyappam Veg Stew,Idiyappam Veg Stew,breakfast,150.0,3.9,26.1,2.6,3.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Appam Veg Stew,Appam Veg Stew,breakfast,150.0,3.5,24.2,3.5,2.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Dalia,Vegetable Dalia,breakfast,180.0,6.0,32.0,3.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Cornflakes Milk,Cornflakes Milk,breakfast,150.0,5.0,24.3,2.9,1.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Peanut Butter Toast,Peanut Butter Toast,breakfast,150.0,5.4,15.6,8.4,1.8,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Rajma Curry White Rice,Rajma Curry White Rice,lunch,130.0,2.7,28.0,0.3,4.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Rajma Curry Brown Rice,Rajma Curry Brown Rice,lunch,150.0,6.2,25.6,2.2,4.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chole Curry White Rice,Chole Curry White Rice,lunch,130.0,2.7,28.0,0.3,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chole Curry Roti,Chole Curry Roti,lunch,150.0,6.4,21.8,2.7,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Dal Tadka White Rice,Dal Tadka White Rice,lunch,130.0,2.7,28.0,0.3,3.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Dal Tadka Roti,Dal Tadka Roti,lunch,150.0,5.9,21.4,2.7,3.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Palak Paneer Roti,Palak Paneer Roti,lunch,150.0,7.1,13.2,7.1,2.2,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Paneer Butter Masala Roti,Paneer Butter Masala Roti,lunch,150.0,6.2,14.2,7.5,1.7,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Vegetable Curry Rice,Vegetable Curry Rice,lunch,150.0,3.8,24.4,3.3,3.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Curry Roti,Vegetable Curry Roti,lunch,150.0,3.6,22.8,3.1,4.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Curry White Rice,Chicken Curry White Rice,lunch,175.0,15.0,10.0,8.0,1.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Curry Brown Rice,Chicken Curry Brown Rice,lunch,175.0,15.0,10.0,8.0,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Curry Rice,Fish Curry Rice,lunch,150.0,14.0,5.0,8.0,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg Curry Rice,Egg Curry Rice,lunch,150.0,8.3,17.5,6.2,1.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Sambar Rice,Sambar Rice,lunch,150.0,5.0,25.0,2.5,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Curd Rice Veg Curry,Curd Rice Veg Curry,lunch,150.0,4.1,20.9,3.6,1.4,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Soya Chunk Curry Rice,Soya Chunk Curry Rice,lunch,150.0,9.4,18.0,3.4,3.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Tofu Curry Rice,Tofu Curry Rice,lunch,150.0,8.2,18.2,4.1,3.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Mixed Dal Rice,Mixed Dal Rice,lunch,150.0,6.8,23.2,2.9,4.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Khichdi,Vegetable Khichdi,lunch,150.0,5.0,25.0,2.5,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Khichdi,Paneer Khichdi,lunch,150.0,6.2,20.3,4.4,2.6,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Lemon Rice Dal,Lemon Rice Dal,lunch,150.0,4.2,24.4,2.8,2.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Pulao Raita,Vegetable Pulao Raita,lunch,150.0,4.2,20.8,4.2,2.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Biryani,Chicken Biryani,lunch,150.0,7.9,16.1,6.4,0.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Veg Biryani Raita,Veg Biryani Raita,lunch,150.0,3.9,21.3,4.7,2.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Curd Rice Pickle,Curd Rice Pickle,lunch,150.0,3.9,21.3,3.4,1.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Ragi Mudde Sambar,Ragi Mudde Sambar,lunch,150.0,4.4,25.6,1.8,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Bajra Roti Veg Curry,Bajra Roti Veg Curry,lunch,150.0,4.2,23.4,2.8,4.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Jowar Roti Dal,Jowar Roti Dal,lunch,150.0,5.0,23.0,2.0,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Chettinad Rice,Chicken Chettinad Rice,lunch,160.0,10.0,20.0,5.0,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Fry Rice,Fish Fry Rice,lunch,150.0,10.2,13.9,7.3,0.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg Fried Rice,Egg Fried Rice,lunch,150.0,7.1,18.9,5.5,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Fried Rice,Vegetable Fried Rice,lunch,150.0,3.5,22.9,4.4,1.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Fried Rice,Paneer Fried Rice,lunch,150.0,5.8,18.8,5.8,1.2,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Sambar Sadham,Sambar Sadham,lunch,150.0,4.8,24.2,2.4,4.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Thali,Vegetable Thali,lunch,150.0,4.3,20.0,5.0,3.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Gujarati Dal Rice,Gujarati Dal Rice,lunch,150.0,5.2,24.4,2.8,3.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Kadhi Rice,Kadhi Rice,lunch,150.0,4.1,21.8,3.6,1.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Korma Roti,Chicken Korma Roti,lunch,150.0,10.3,12.6,6.3,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Mutton Curry Rice,Mutton Curry Rice,lunch,150.0,10.0,12.7,7.3,0.7,0.0,0.0,0.0,100,"mutton, meat, lamb, goat, ",True,IFCT/USDA Approximation
+Vegetable Stew Appam,Vegetable Stew Appam,lunch,150.0,3.3,21.7,4.2,2.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Curry Brown Rice,Paneer Curry Brown Rice,lunch,150.0,6.2,18.3,5.8,2.1,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Tofu Palak Rice,Tofu Palak Rice,lunch,150.0,7.9,18.5,4.4,3.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Drumstick Sambar Rice,Drumstick Sambar Rice,lunch,150.0,4.5,25.0,2.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chana Masala Rice,Chana Masala Rice,lunch,150.0,6.7,24.2,2.5,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chana Masala Roti,Chana Masala Roti,lunch,150.0,7.0,21.6,2.3,5.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Kofta Roti,Vegetable Kofta Roti,lunch,150.0,5.1,16.3,6.9,2.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Kofta Roti,Paneer Kofta Roti,lunch,150.0,6.2,13.8,7.7,1.5,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Fish Curry Brown Rice,Fish Curry Brown Rice,lunch,150.0,14.0,5.0,8.0,1.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Apple,Apple,snacks,95.0,0.5,25.0,0.3,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Banana,Banana,snacks,105.0,1.3,27.0,0.4,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Orange,Orange,snacks,62.0,1.2,15.0,0.2,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Mango,Mango,snacks,135.0,1.1,35.0,0.6,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Papaya,Papaya,snacks,60.0,0.7,15.0,0.1,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Guava,Guava,snacks,68.0,2.6,14.0,0.9,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pineapple,Pineapple,snacks,82.0,0.9,21.0,0.2,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Watermelon,Watermelon,snacks,45.0,0.9,11.0,0.2,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pomegranate,Pomegranate,snacks,105.0,1.7,26.0,0.4,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chikoo,Chikoo,snacks,140.0,0.9,36.0,1.1,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Jackfruit,Jackfruit,snacks,185.0,2.8,40.0,1.5,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Dates Dry,Dates Dry,snacks,120.0,1.0,32.0,0.2,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Raisins,Raisins,snacks,110.0,1.2,29.0,0.2,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Almonds,Almonds,snacks,160.0,6.0,6.0,14.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Walnuts,Walnuts,snacks,185.0,4.0,4.0,18.0,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Peanuts Roasted,Peanuts Roasted,snacks,202.0,7.0,12.0,14.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Roasted Chana,Roasted Chana,snacks,360.0,19.0,58.0,6.0,6.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Boiled Corn,Boiled Corn,snacks,150.0,4.0,30.0,2.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Popcorn,Popcorn,snacks,110.0,3.0,22.0,2.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Makhana Roasted,Makhana Roasted,snacks,130.0,4.0,20.0,3.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Sprouts Chaat,Sprouts Chaat,snacks,160.0,10.0,20.0,3.0,6.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fruit Chaat,Fruit Chaat,snacks,120.0,2.0,28.0,0.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Banana Smoothie,Banana Smoothie,snacks,150.0,2.9,25.0,2.9,2.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Mixed Fruit Smoothie,Mixed Fruit Smoothie,snacks,190.0,3.0,34.0,3.0,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Curd Fruit Bowl,Curd Fruit Bowl,snacks,150.0,6.0,22.0,4.0,2.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Peanut Chikki,Peanut Chikki,snacks,180.0,6.0,20.0,10.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Energy Balls,Energy Balls,snacks,190.0,6.0,24.0,8.0,4.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Vegetable Soup,Vegetable Soup,snacks,90.0,3.0,15.0,1.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Tomato Soup,Tomato Soup,snacks,100.0,3.0,18.0,1.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Samosa,Samosa,snacks,150.0,2.9,18.5,8.1,1.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Cutlet,Vegetable Cutlet,snacks,150.0,4.1,17.7,6.8,2.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pav Bhaji,Pav Bhaji,snacks,150.0,3.9,18.9,5.5,2.4,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Paneer Pakora,Paneer Pakora,snacks,150.0,6.4,7.5,9.6,1.1,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Cheese Sandwich,Cheese Sandwich,snacks,150.0,5.8,16.2,8.1,1.2,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Grilled Sandwich,Grilled Sandwich,snacks,150.0,4.8,18.2,6.4,1.6,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Paneer Roll,Paneer Roll,snacks,150.0,6.6,14.1,7.5,0.9,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Egg Roll,Egg Roll,snacks,150.0,8.0,14.0,7.0,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg Bhurji,Egg Bhurji,snacks,150.0,9.5,4.1,10.9,0.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Nuggets,Chicken Nuggets,snacks,150.0,8.4,10.3,9.4,0.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Dal Curry Roti,Dal Curry Roti,dinner,150.0,6.3,21.9,2.9,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Curry Roti,Paneer Curry Roti,dinner,150.0,7.0,14.1,7.5,1.9,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Chicken Curry Roti,Chicken Curry Roti,dinner,175.0,15.0,10.0,8.0,1.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Curry Roti,Fish Curry Roti,dinner,150.0,14.0,5.0,8.0,0.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Khichdi,Khichdi,dinner,150.0,5.2,24.2,2.3,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Tofu Curry Roti,Tofu Curry Roti,dinner,150.0,8.6,17.1,5.4,3.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Lentil Soup Roti,Lentil Soup Roti,dinner,150.0,7.5,22.5,2.5,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg Curry Roti,Egg Curry Roti,dinner,150.0,9.0,14.0,7.0,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Stir Fry Roti,Vegetable Stir Fry Roti,dinner,150.0,4.0,19.6,4.6,3.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Bhurji Roti,Paneer Bhurji Roti,dinner,150.0,7.3,13.6,7.3,1.8,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Grilled Chicken Curry,Grilled Chicken Curry,dinner,175.0,15.0,10.0,8.0,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Stuffed Capsicum Roti,Stuffed Capsicum Roti,dinner,150.0,4.0,19.6,4.6,2.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Mixed Dal Brown Rice,Mixed Dal Brown Rice,dinner,150.0,7.0,22.0,2.5,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Soup Roti,Chicken Soup Roti,dinner,150.0,13.8,16.2,2.5,1.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Veg Fried Rice Dal,Veg Fried Rice Dal,dinner,150.0,4.7,24.4,3.8,2.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Salad Roti,Paneer Salad Roti,dinner,150.0,7.0,14.0,7.0,2.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Tofu Salad Roti,Tofu Salad Roti,dinner,150.0,8.1,17.3,5.8,2.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Masala Omelette Roti,Masala Omelette Roti,dinner,150.0,8.6,13.9,7.5,1.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Ragi Roti Veg Curry,Ragi Roti Veg Curry,dinner,150.0,4.4,23.3,2.8,4.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Wrap Indian,Chicken Wrap Indian,dinner,150.0,11.2,13.1,5.6,0.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Rice Bowl,Paneer Rice Bowl,dinner,150.0,6.0,20.6,5.1,1.7,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Vegetable Dal Soup Roti,Vegetable Dal Soup Roti,dinner,150.0,7.2,23.5,2.0,5.2,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Tomato Rasam Rice,Tomato Rasam Rice,dinner,150.0,4.0,26.5,1.7,3.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Sambar Idli,Sambar Idli,dinner,140.0,4.0,30.0,0.5,4.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Curd Ragi Roti,Curd Ragi Roti,dinner,150.0,4.4,22.2,2.8,2.2,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Paneer Tikka Roti,Paneer Tikka Roti,dinner,150.0,7.9,11.5,7.9,1.3,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Chicken Tikka Roti,Chicken Tikka Roti,dinner,150.0,12.5,10.0,5.8,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Soya Chunk Stir Fry Roti,Soya Chunk Stir Fry Roti,dinner,150.0,11.0,17.0,4.0,3.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Pulao,Vegetable Pulao,dinner,150.0,4.0,24.0,4.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Rice Bowl,Vegetable Rice Bowl,dinner,150.0,3.8,24.6,3.2,3.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Steamed Veg Curry Roti,Steamed Veg Curry Roti,dinner,150.0,3.8,22.5,2.5,4.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Idli,Idli,breakfast,140.0,4.0,30.0,0.5,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Dosa Plain,Dosa Plain,breakfast,175.0,4.0,32.0,3.5,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Paratha,Vegetable Paratha,breakfast,150.0,3.8,19.3,6.4,2.1,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Curd Fruit Smoothie,Curd Fruit Smoothie,snacks,180.0,6.0,28.0,4.0,2.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Mixed Nuts Bowl,Mixed Nuts Bowl,snacks,200.0,6.0,10.0,16.0,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Buttermilk,Buttermilk,snacks,50.0,3.0,5.0,2.0,0.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Coconut Water,Coconut Water,snacks,45.0,1.0,9.0,0.0,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pineapple Chaat,Pineapple Chaat,snacks,90.0,1.0,22.0,0.2,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Guava Slices,Guava Slices,snacks,70.0,2.0,14.0,0.5,5.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Apple Chaat,Apple Chaat,snacks,100.0,0.5,26.0,0.3,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Bajra Roti Dal,Bajra Roti Dal,dinner,150.0,5.0,24.0,2.5,4.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Jowar Roti Veg Curry,Jowar Roti Veg Curry,dinner,150.0,4.7,23.8,2.6,4.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Curry Rice,Paneer Curry Rice,dinner,150.0,6.2,18.3,5.8,2.1,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Chicken Curry Rice,Chicken Curry Rice,dinner,175.0,15.0,10.0,8.0,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Thali Light,Vegetable Thali Light,dinner,150.0,4.2,20.0,5.0,3.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Lentil Veg Bowl,Lentil Veg Bowl,dinner,150.0,6.9,23.1,2.3,4.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Paneer Veg Bowl,Paneer Veg Bowl,dinner,150.0,6.6,17.8,6.6,2.3,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Chicken Fry Pieces,Chicken Fry Pieces,dinner,150.0,11.5,14.1,4.4,1.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Vegetable Soup Roti,Vegetable Soup Roti,dinner,127.0,4.1,23.2,2.0,4.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Paratha Roll,Chicken Paratha Roll,dinner,150.0,10.0,13.3,5.8,0.8,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Vegetable Wrap,Vegetable Wrap,dinner,150.0,4.6,23.1,3.5,4.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Steamed Veg Bowl,Steamed Veg Bowl,dinner,148.0,6.0,22.0,4.0,6.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Grilled Chicken Breast,Grilled Chicken Breast,dinner,160.0,18.4,3.9,7.9,0.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Clear Soup,Chicken Clear Soup,lunch,147.0,23.1,5.5,2.4,0.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Stew,Chicken Stew,lunch,163.0,22.9,8.8,4.0,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Tandoori Chicken,Tandoori Chicken (Skinless),lunch,145.0,19.3,9.2,3.3,0.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Sukka,"Chicken Sukka (Dry, Low Oil)",snack,138.0,18.9,7.8,3.5,1.7,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg White Omelette,Egg White Omelette,dinner,136.0,18.0,9.2,3.0,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg White Bhurji,Egg White Bhurji,lunch,97.0,14.8,5.3,1.8,1.9,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Stew,Fish Stew,breakfast,181.0,28.8,4.9,5.1,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Steamed Fish,Steamed Fish,dinner,171.0,26.1,4.8,3.9,1.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Grilled Fish,Grilled Fish,dinner,148.0,22.5,2.0,4.5,0.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Curry,Fish Curry (Low Oil),lunch,150.0,14.0,5.0,8.0,0.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Prawn Stir Fry,Prawn Stir Fry,dinner,162.0,28.0,2.3,4.5,1.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Steamed Prawns,Steamed Prawns,dinner,119.0,17.0,3.8,3.7,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Crab Soup,Crab Soup,lunch,175.0,25.2,5.5,5.8,1.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Pepper Fry,Chicken Pepper Fry (Low Oil),lunch,180.0,21.7,8.0,6.8,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Kurma,Chicken Kurma (Light),dinner,197.0,26.7,9.0,6.0,1.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Manchow Soup,Chicken Manchow Soup,snack,131.0,18.6,4.4,4.3,0.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Clear Soup,Fish Clear Soup,dinner,144.0,27.0,7.5,1.8,1.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg Drop Soup,Egg Drop Soup,dinner,96.0,12.3,5.3,3.3,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Shorba,Chicken Shorba,lunch,123.0,15.1,4.8,4.8,0.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Mutton Soup,Mutton Soup (Lean),lunch,177.0,27.2,4.6,5.5,0.4,0.0,0.0,0.0,100,"mutton, meat, lamb, goat, ",True,IFCT/USDA Approximation
+Chicken Lettuce Wrap,Chicken Lettuce Wrap,lunch,127.0,18.5,6.9,2.8,0.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Tikka,Fish Tikka (Low Oil),lunch,137.0,17.5,8.0,3.9,0.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Prawn Soup,Prawn Soup,lunch,166.0,22.8,5.4,5.9,1.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg White Scramble,Egg White Scramble,snack,123.0,17.3,7.5,3.4,0.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Salad,Chicken Salad (Indian Style),dinner,153.0,20.2,7.3,4.8,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Steamed With Spices,Fish Steamed with Spices,lunch,87.0,15.7,1.1,2.2,0.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Broth,Chicken Broth,lunch,130.0,22.8,3.9,2.6,1.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Prawn Pepper Fry,Prawn Pepper Fry (Low Oil),lunch,129.0,20.0,6.3,2.6,2.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Crab Clear Soup,Crab Clear Soup,lunch,139.0,20.1,3.2,3.1,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Kebab,Chicken Kebab (Air Fried),lunch,140.0,28.1,1.2,3.6,0.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Curry,Fish Curry (Steamed),lunch,150.0,14.0,5.0,8.0,0.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg White Curry,Egg White Curry,lunch,124.0,16.6,6.9,3.3,1.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Rasam,Chicken Rasam,lunch,186.0,29.4,9.8,3.2,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Rasam,Fish Rasam,dinner,129.0,20.5,3.1,3.8,0.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Saaru,Chicken Saaru,dinner,161.0,20.7,6.9,5.6,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Egg White Roast,Egg White Roast,breakfast,119.0,15.6,3.2,3.6,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Pepper Soup,Fish Pepper Soup,snack,112.0,17.2,1.3,4.2,0.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Clear Gravy,Chicken Clear Gravy,lunch,205.0,29.8,8.4,5.8,1.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Prawn Clear Curry,Prawn Clear Curry,snack,148.0,27.2,1.8,3.5,1.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Chicken Kebab,Chicken Kebab,snack,131.0,21.9,5.0,2.6,1.4,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Fish Lime Soup,Fish Lime Soup,snack,161.0,24.4,3.2,5.2,0.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Guava Slices,Guava slices (1 cup),snack,112.0,4.2,24.0,1.6,9.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Orange,Orange (medium),snack,62.0,1.2,15.4,0.2,3.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pear Slices,Pear slices (1 cup),snack,96.0,0.6,26.0,0.2,5.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Kiwi,Kiwi (1 medium),snack,42.0,0.8,10.0,0.4,2.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Roasted Makhana,Roasted makhana,snack,35.0,1.2,7.0,0.1,0.8,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Roasted Chana,Roasted chana,snack,360.0,19.0,58.0,6.0,3.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Boiled Chickpeas,Boiled chickpeas,snack,66.0,3.5,11.0,1.0,3.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Edamame Boiled,Edamame boiled,snack,61.0,6.0,5.0,2.5,2.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Tofu Cubes,Tofu cubes,snack,76.0,8.0,2.0,4.8,0.3,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Cottage Cheese Cubes,Cottage cheese cubes,snack,98.0,6.5,2.5,7.5,0.0,0.0,0.0,0.0,100,"milk, butter, ghee, cheese, curd, ",True,IFCT/USDA Approximation
+Unsweetened Soy Milk,Unsweetened soy milk (1 cup),snack,80.0,7.0,4.0,4.0,1.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Pumpkin Seeds,Pumpkin seeds,snack,56.0,3.0,2.0,4.5,1.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Sunflower Seeds,Sunflower seeds,snack,58.0,2.0,2.0,5.0,1.1,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Watermelon Cubes,Watermelon cubes (1 cup),snack,46.0,0.9,11.0,0.2,0.6,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Papaya Cubes,Papaya cubes (1 cup),snack,55.0,0.9,14.0,0.2,2.5,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Grilled Chicken Breast Cubes,Grilled chicken breast cubes(40gm),snack,66.0,12.4,0.0,1.4,0.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Boiled Egg Whites,Boiled Egg Whites(2 Large),snack,155.0,13.0,1.1,10.6,0.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation
+Steamed Fish,Steamed fish,snack,97.0,10.5,0.0,5.5,0.0,0.0,0.0,0.0,100,,False,IFCT/USDA Approximation

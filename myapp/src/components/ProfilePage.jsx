@@ -82,9 +82,14 @@ const ProfilePage = () => {
     reader.readAsDataURL(file);
   };
 
+  const [phoneError, setPhoneError] = useState("");
+  const [emailError, setEmailError] = useState("");
+
   const handleSaveProfile = async () => {
-    if (newPhone && newPhone.length !== 10) {
-      alert("Please enter a valid 10-digit Indian mobile number.");
+    setPhoneError("");
+    const phoneRegex = /^[0-9]{10}$/;
+    if (newPhone && !phoneRegex.test(newPhone)) {
+      setPhoneError("Please enter a valid 10-digit Indian mobile number.");
       return;
     }
     
@@ -107,7 +112,6 @@ const ProfilePage = () => {
         localStorage.setItem("userName", newName);
         window.dispatchEvent(new Event("profileUpdated"));
         setIsEditing(false);
-        alert("Profile updated successfully!");
       } else {
         alert(response.data.error || "Failed to update");
       }
@@ -121,7 +125,6 @@ const ProfilePage = () => {
       const response = await axios.post(`http://${window.location.hostname}:5000/api/send-otp`, { email: userEmail });
       if (response.data.success) {
         setEmailUpdateState('verifying');
-        alert("OTP sent to your current email!");
       } else {
         alert(response.data.error);
       }
@@ -144,6 +147,13 @@ const ProfilePage = () => {
   };
 
   const saveNewEmail = async () => {
+    setEmailError("");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+        setEmailError("Please enter a valid email address.");
+        return;
+    }
+
     try {
       const response = await axios.post(`http://${window.location.hostname}:5000/api/update-profile`, {
         old_email: userEmail,
@@ -169,8 +179,8 @@ const ProfilePage = () => {
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-4 sm:space-y-6 min-h-full">
       <div className="container max-w-5xl mx-auto">
-        <div className="bg-theme-card p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm mb-6 sm:mb-8">
-          <h2 className="text-theme-text text-xl sm:text-2xl font-extrabold mb-4 sm:mb-6">Account Settings</h2>
+        <div className="bg-theme-card p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-sm mb-6 sm:mb-8 border border-slate-200/60">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-6 sm:mb-8">Account Settings</h2>
           
           {isLoading ? (
             <div className="text-center py-12 text-theme-muted">Loading profile...</div>
@@ -204,7 +214,7 @@ const ProfilePage = () => {
                         className="w-full sm:flex-1 px-4 py-3 rounded-xl border border-theme-border bg-transparent text-theme-text font-medium cursor-not-allowed" 
                         value={userEmail} 
                       />
-                      <button className="w-full sm:w-auto justify-center bg-blue-50 text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-blue-100 transition-all flex items-center gap-2 whitespace-nowrap" onClick={initiateEmailUpdate}>
+                      <button className="w-full sm:w-auto justify-center bg-theme-accent text-white px-6 py-3 rounded-xl font-bold hover:brightness-110 shadow-sm transition-all flex items-center gap-2 whitespace-nowrap" onClick={initiateEmailUpdate}>
                          Change Email
                       </button>
                     </div>
@@ -219,7 +229,7 @@ const ProfilePage = () => {
                         value={otp}
                         onChange={e => setOtp(e.target.value)}
                       />
-                      <button className="w-full sm:w-auto justify-center bg-blue-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-600 transition-all whitespace-nowrap" onClick={verifyOtp}>
+                      <button className="w-full sm:w-auto justify-center bg-theme-accent text-white px-6 py-3 rounded-xl font-bold hover:brightness-110 shadow-sm transition-all whitespace-nowrap" onClick={verifyOtp}>
                          Verify OTP
                       </button>
                       <button className="w-full sm:w-auto text-gray-400 hover:text-gray-600 font-bold px-3 py-2" onClick={() => setEmailUpdateState('idle')}>Cancel</button>
@@ -227,18 +237,21 @@ const ProfilePage = () => {
                   )}
 
                   {emailUpdateState === 'updating' && (
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
-                      <input 
-                        type="email" 
-                        className="w-full sm:flex-1 px-4 py-3 rounded-xl border border-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-primary bg-white" 
-                        placeholder="Enter new email address"
-                        value={newEmail}
-                        onChange={e => setNewEmail(e.target.value)}
-                      />
-                      <button className="w-full sm:w-auto justify-center bg-theme-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-theme-primary/90 transition-all whitespace-nowrap" onClick={saveNewEmail}>
-                         Save New Email
-                      </button>
-                      <button className="w-full sm:w-auto text-gray-400 hover:text-gray-600 font-bold px-3 py-2" onClick={() => setEmailUpdateState('idle')}>Cancel</button>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
+                        <input 
+                          type="email" 
+                          className="w-full sm:flex-1 px-4 py-3 rounded-xl border border-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-primary bg-white" 
+                          placeholder="Enter new email address"
+                          value={newEmail}
+                          onChange={e => { setNewEmail(e.target.value); setEmailError(""); }}
+                        />
+                        <button className="w-full sm:w-auto justify-center bg-theme-accent text-white px-6 py-3 rounded-xl font-bold hover:brightness-110 shadow-sm transition-all whitespace-nowrap" onClick={saveNewEmail}>
+                           Save New Email
+                        </button>
+                        <button className="w-full sm:w-auto text-gray-400 hover:text-gray-600 font-bold px-3 py-2" onClick={() => setEmailUpdateState('idle')}>Cancel</button>
+                      </div>
+                      {emailError && <p className="text-red-500 text-xs font-bold pl-1">{emailError}</p>}
                     </div>
                   )}
 
@@ -270,22 +283,26 @@ const ProfilePage = () => {
                   
                   <div>
                     <label className="block text-sm font-bold text-theme-muted mb-1 ml-1 uppercase"><FontAwesomeIcon icon={faPhone} className="mr-1"/> Phone Number</label>
-                    <div className="flex">
-                      <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-theme-border bg-theme-bg/50 text-theme-muted font-bold">
-                        +91
-                      </span>
-                      <input 
-                        type="tel" 
-                        disabled={!isEditing}
-                        maxLength="10"
-                        className={`flex-1 px-4 py-3 rounded-r-xl border border-theme-border focus:outline-none focus:ring-2 focus:ring-theme-accent text-theme-text ${!isEditing ? 'bg-theme-bg/50 cursor-not-allowed' : 'bg-white'}`} 
-                        value={newPhone} 
-                        onChange={(e)=> {
-                          const val = e.target.value.replace(/\D/g, ''); // keep only digits
-                          setNewPhone(val);
-                        }} 
-                        placeholder="10-digit mobile number"
-                      />
+                    <div className="flex flex-col gap-2">
+                      <div className="flex">
+                        <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-theme-border bg-theme-bg/50 text-theme-muted font-bold">
+                          +91
+                        </span>
+                        <input 
+                          type="tel" 
+                          disabled={!isEditing}
+                          maxLength="10"
+                          className={`flex-1 px-4 py-3 rounded-r-xl border border-theme-border focus:outline-none focus:ring-2 focus:ring-theme-accent text-theme-text ${!isEditing ? 'bg-theme-bg/50 cursor-not-allowed' : 'bg-white'}`} 
+                          value={newPhone} 
+                          onChange={(e)=> {
+                            const val = e.target.value.replace(/\D/g, ''); // keep only digits
+                            setNewPhone(val);
+                            setPhoneError("");
+                          }} 
+                          placeholder="10-digit mobile number"
+                        />
+                      </div>
+                      {phoneError && <p className="text-red-500 text-xs font-bold pl-1">{phoneError}</p>}
                     </div>
                   </div>
                 </div>
@@ -293,7 +310,7 @@ const ProfilePage = () => {
                 <div className="flex justify-end pt-4 w-full">
                   {!isEditing ? (
                     <button 
-                      className="w-full sm:w-auto justify-center bg-theme-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-theme-primary/90 transition-all shadow-sm flex items-center gap-2" 
+                      className="w-full sm:w-auto justify-center bg-theme-accent text-white px-8 py-3 rounded-xl font-bold hover:brightness-110 transition-all shadow-sm flex items-center gap-2" 
                       onClick={() => setIsEditing(true)}
                     >
                       <FontAwesomeIcon icon={faUserEdit}/> Edit Profile
@@ -314,7 +331,7 @@ const ProfilePage = () => {
                         Cancel
                       </button>
                       <button 
-                        className="w-full sm:w-auto justify-center bg-theme-text text-white px-8 py-3 rounded-xl font-bold hover:bg-theme-text/90 transition-all shadow-sm flex items-center gap-2" 
+                        className="w-full sm:w-auto justify-center bg-theme-accent text-white px-8 py-3 rounded-xl font-bold hover:brightness-110 transition-all shadow-sm flex items-center gap-2" 
                         onClick={handleSaveProfile}
                       >
                         <FontAwesomeIcon icon={faSave}/> Save Details

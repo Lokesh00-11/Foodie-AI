@@ -115,12 +115,24 @@ df_scaled = scaler.fit_transform(df[feature_cols].fillna(0))
 
 # ---------------- HELPERS ----------------
 def bmr(w, h, a, g):
-    return 10*float(w) + 6.25*(float(h)*100) - 5*int(a) + (5 if str(g).lower()=="male" else -161)
+    # Coerce to float/int
+    try:
+        w_f = float(w)
+        h_f = float(h)
+        a_i = int(a)
+    except (ValueError, TypeError):
+        return 0
+        
+    # If height is provided in meters (e.g. 1.67), convert to cm
+    if h_f < 3.0:
+        h_f *= 100
+        
+    return 10*w_f + 6.25*h_f - 5*a_i + (5 if str(g).lower()=="male" else -161)
 
 def calorie_target(tdee, goal):
     g = str(goal).lower()
-    if any(x in g for x in ["gain", "bulking"]): return tdee + 500
-    if any(x in g for x in ["loss", "fat"]): return max(1200, tdee - 500)
+    if any(x in g for x in ["gain", "bulk", "surplus"]): return tdee + 500
+    if any(x in g for x in ["loss", "fat", "cut", "deficit"]): return max(1200, tdee - 500)
     return tdee
 
 def get_ml_recommendation(pool, target_cal):
@@ -133,14 +145,14 @@ def get_ml_recommendation(pool, target_cal):
     return df.iloc[best_idx]
 
 def optimize_meal_qty(food_item, target_cal):
-    prob = pulp.LpProblem("Qty_Opt", pulp.LpMinimize)
-    qty = pulp.LpVariable("qty", lowBound=0.2, upBound=8.0)
-    diff = pulp.LpVariable("diff", lowBound=0)
-    prob += diff
-    prob += diff >= (qty * food_item['calories_kcal']) - target_cal
-    prob += diff >= target_cal - (qty * food_item['calories_kcal'])
-    prob.solve(pulp.PULP_CBC_CMD(msg=0))
-    return round(pulp.value(qty), 2)
+    cal_per_100g = food_item.get('calories_kcal', 0)
+    if cal_per_100g <= 10:  # Prevent division by zero or super low calorie foods exploding qty
+        return 2.0
+    
+    qty = target_cal / cal_per_100g
+    
+    # Cap between 50g and 400g for realistic human portions
+    return round(max(0.5, min(4.0, qty)), 2)
 
 def format_fruit_unit(qty, unit_str):
     if qty <= 1: return unit_str
@@ -157,10 +169,19 @@ def generate_weekly_plan(daily_cal, exclusions, diet_pref):
     pref = str(diet_pref).lower().strip()
 
     base_pool = df.copy()
+    
+    # Strict Dietary Enforcement
+    veg_exclusions = ['fish', 'egg', 'chicken', 'meat', 'beef', 'pork', 'mutton', 'seafood', 'prawn']
+    vegan_exclusions = veg_exclusions + ['milk', 'butter', 'cheese', 'paneer', 'curd', 'ghee', 'buttermilk', 'honey', 'dairy']
+    
     if pref == "vegetarian":
         base_pool = base_pool[base_pool["food_type"].isin(["vegetarian", "vegan"])]
+        for item in veg_exclusions:
+            base_pool = base_pool[~base_pool["food_name"].str.contains(item, case=False, na=False)]
     elif pref == "vegan":
         base_pool = base_pool[base_pool["food_type"] == "vegan"]
+        for item in vegan_exclusions:
+            base_pool = base_pool[~base_pool["food_name"].str.contains(item, case=False, na=False)]
 
     clean_exclusions = []
     if exclusions:
@@ -170,42 +191,151 @@ def generate_weekly_plan(daily_cal, exclusions, diet_pref):
             for item in exclusions:
                 clean_exclusions.extend([x.strip().lower() for x in str(item).split(',')])
         
-        clean_exclusions = [x for x in clean_exclusions if x]
+        # Normalise typos
+        clean_exclusions = [x.replace("mllk", "milk").replace("mlk", "milk") for x in clean_exclusions if x]
+        
+        # Map milk to all dairy
+        if "milk" in clean_exclusions:
+            clean_exclusions.extend(['curd', 'paneer', 'cheese', 'ghee', 'buttermilk', 'dairy', 'butter'])
+            
+        clean_exclusions = list(set(clean_exclusions))
 
         for item in clean_exclusions:
-            base_pool = base_pool[~base_pool["food_name"].str.contains(item, case=False, na=False)]
+            if item == "none": continue
+            # Exclude by name OR ingredient
+            base_pool = base_pool[
+                ~(base_pool["food_name"].str.contains(item, case=False, na=False) |
+                  base_pool["ingredients"].str.contains(item, case=False, na=False))
+            ]
+
+    used_foods = {}
 
     for day in range(1, 8):
         day_key = f"Day {day}"
-        lines = [f"DAY_MARKER_{day}"]
-        total_day_cal = 0
+        best_lines = []
+        best_total = 0
+        best_diff = float('inf')
         
-        for meal, ratio in split.items():
-            target = round(daily_cal * ratio)
+        # Try up to 200 times to get within +-2%
+        for attempt in range(200):
+            lines = [f"DAY_MARKER_{day}"]
+            total_day_cal = 0
             
-            meal_pool = base_pool[base_pool["meal_type"] == meal]
+            indian_keywords = ['masala', 'curry', 'paneer', 'dal', 'roti', 'dosa', 'idli', 'chana', 'rajma', 'sabzi', 'tikka', 'aloo', 'poha', 'upma', 'paratha', 'bhindi', 'gobi']
             
-            if "non" in pref and meal in ["lunch", "dinner"]:
-                nv_pool = meal_pool[meal_pool["food_type"] == "non-vegetarian"]
-                if not nv_pool.empty:
-                    meal_pool = nv_pool
+            meals_list = list(split.items())
+            current_day_foods = []
+            day_valid = True
             
-            if meal_pool.empty:
-                meal_pool = base_pool 
+            for idx, (meal, ratio) in enumerate(meals_list):
+                target = round(daily_cal * ratio)
+                
+                meal_pool = base_pool[base_pool["meal_type"] == meal]
+                if "non" in pref and meal in ["lunch", "dinner"]:
+                    nv_pool = meal_pool[meal_pool["food_type"] == "non-vegetarian"]
+                    if not nv_pool.empty: meal_pool = nv_pool
+                if meal_pool.empty: meal_pool = base_pool 
 
-            if meal_pool.empty:
-                lines.append(f"[{meal.upper()}]: No suitable food found - 0g (0 kcal) [END_MEAL]")
-                continue
+                max_repeats = 2
+                overused = [f for f, count in used_foods.items() if count >= max_repeats]
+                filtered_pool = meal_pool[~meal_pool["food_name"].isin(overused)]
+                
+                if filtered_pool.empty:
+                    # Fallback to 3 repeats
+                    max_repeats = 3
+                    overused = [f for f, count in used_foods.items() if count >= max_repeats]
+                    filtered_pool = meal_pool[~meal_pool["food_name"].isin(overused)]
+                
+                if not filtered_pool.empty:
+                    meal_pool = filtered_pool
+
+                indian_pool = meal_pool[meal_pool['food_name'].str.lower().str.contains('|'.join(indian_keywords))]
+                if not indian_pool.empty and np.random.rand() > 0.15: meal_pool = indian_pool
+
+                this_meal_items = []
+                food1 = get_ml_recommendation(meal_pool, target)
+                cal1 = max(10, food1.get('calories_kcal', 100))
+                
+                if (4.0 * cal1) < target * 0.96:
+                    # Pick 2 items
+                    qty1 = optimize_meal_qty(food1, target)
+                    if qty1 > 1.0: qty1 = max(0.5, qty1 + np.random.uniform(-0.1, 0.1))
+                    this_meal_items.append({'food': food1, 'qty': qty1})
+                    
+                    rem = target - (qty1 * cal1)
+                    pool2 = meal_pool[meal_pool["food_name"] != food1["food_name"]]
+                    if not pool2.empty:
+                        food2 = get_ml_recommendation(pool2, rem)
+                        qty2 = optimize_meal_qty(food2, rem)
+                        if qty2 > 1.0: qty2 = max(0.5, qty2 + np.random.uniform(-0.1, 0.1))
+                        this_meal_items.append({'food': food2, 'qty': qty2})
+                else:
+                    qty1 = optimize_meal_qty(food1, target)
+                    if qty1 > 1.0: qty1 = max(0.5, qty1 + np.random.uniform(-0.1, 0.1))
+                    this_meal_items.append({'food': food1, 'qty': qty1})
+
+                # Correction pass for this meal
+                current_meal_cal = sum(i['qty'] * max(10, i['food'].get('calories_kcal', 0)) for i in this_meal_items)
+                meal_diff = target - current_meal_cal
+                
+                for item in this_meal_items:
+                    if abs(meal_diff) < 5: break
+                    c_per = max(10, item['food'].get('calories_kcal', 0))
+                    qty_adj = meal_diff / c_per
+                    new_qty = max(0.5, min(4.0, item['qty'] + qty_adj))
+                    actual_adj = new_qty - item['qty']
+                    item['qty'] = new_qty
+                    meal_diff -= actual_adj * c_per
+
+                # Rounding to 5g and kcal calculation
+                meal_texts = []
+                meal_cal_final = 0
+                for item in this_meal_items:
+                    grams = int(round(item['qty'] * 100 / 5.0) * 5)
+                    grams = max(50, min(400, grams))
+                    cal_100g = item['food'].get('calories_kcal', 0)
+                    item_cal = int(round(grams * cal_100g / 100.0))
+                    
+                    p = int(round(grams * item['food'].get('protein_g', 0) / 100.0))
+                    c = int(round(grams * item['food'].get('carbs_g', 0) / 100.0))
+                    f = int(round(grams * item['food'].get('fats_g', 0) / 100.0))
+                    fi = int(round(grams * item['food'].get('fiber_g', 0) / 100.0))
+                    vit = int(round(grams * item['food'].get('vitamin_c_mg', 0) / 100.0))
+                    ca = int(round(grams * item['food'].get('calcium_mg', 0) / 100.0))
+                    fe = round(grams * item['food'].get('iron_mg', 0) / 100.0, 1)
+                    
+                    fname = item['food']['food_name']
+                    meal_texts.append(f"{fname} - {grams}g ({item_cal} kcal | P:{p} C:{c} F:{f} Fi:{fi} V:{vit} Ca:{ca} Fe:{fe})")
+                    meal_cal_final += item_cal
+                    current_day_foods.append(fname)
+                    
+                total_day_cal += meal_cal_final
+                lines.append(f"[{meal.upper()}]: {' + '.join(meal_texts)} [END_MEAL]")
+                
+                # Check meal bounds (+/- 10% is practically required due to 5g portion quantization on small meals)
+                if not (target * 0.90 <= meal_cal_final <= target * 1.10):
+                    day_valid = False
             
-            food = get_ml_recommendation(meal_pool, target)
-            qty = optimize_meal_qty(food, target)
-            meal_cal = int(qty * food['calories_kcal'])
-            total_day_cal += meal_cal
+            diff = abs(total_day_cal - daily_cal)
+            if diff < best_diff:
+                best_diff = diff
+                best_total = total_day_cal
+                best_lines = list(lines)
+                best_day_foods = list(current_day_foods)
+                best_day_valid = day_valid
+                
+            if day_valid and (0.98 * daily_cal <= total_day_cal <= 1.02 * daily_cal):
+                break 
+                
+        if not (best_day_valid and (0.98 * daily_cal <= best_total <= 1.02 * daily_cal)):
+            raise ValueError(f"Could not generate a valid plan for {day_key} within +/- 2% daily target ({daily_cal} kcal) and per-meal bounds. Best total: {best_total}, valid: {best_day_valid}")
+
+                
+        for f in best_day_foods:
+            used_foods[f] = used_foods.get(f, 0) + 1
             
-            lines.append(f"[{meal.upper()}]: {food['food_name']} - {int(qty*100)}g ({meal_cal} kcal) [END_MEAL]")
-        
-        lines.append(f"[CALORIE_COUNT]: {int(total_day_cal)}")
-        weekly_output[day_key] = "\n".join(lines)
+        best_lines.append(f"[CALORIE_COUNT]: {int(best_total)}")
+        weekly_output[day_key] = "\n".join(best_lines)
         
     return weekly_output
 
@@ -248,28 +378,41 @@ def api():
 
         base_bmr = bmr(user.weight, user.height, user.age, user.gender)
         
-        multiplier = 1.55
-        if activity == "sedentary":
+        # Explicit activity mapping from frontend labels
+        act_lower = activity.lower()
+        if any(x in act_lower for x in ["sedentary"]):
             multiplier = 1.2
-        elif "light" in activity:
+        elif any(x in act_lower for x in ["light", "1-2"]):
             multiplier = 1.375
-        elif activity == "moderate":
+        elif any(x in act_lower for x in ["moderate", "3-4"]):
             multiplier = 1.55
-        elif activity == "active":
+        elif any(x in act_lower for x in ["active", "5-6"]):
             multiplier = 1.725
-        elif activity == "athlete":
+        elif any(x in act_lower for x in ["athlete", "very active", "daily"]):
             multiplier = 1.9
+        else:
+            return jsonify({"success": False, "error": f"Unknown activity level: {activity}"}), 400
             
         tdee = base_bmr * multiplier
-        daily = calorie_target(round(tdee), user.goal)
+        daily = calorie_target(tdee, user.goal)
         
-        plan = generate_weekly_plan(daily, data.get("exclusions", []), diet_pref)
+        if not (800 <= base_bmr <= 3500):
+            return jsonify({"success": False, "error": f"BMR {base_bmr} is out of realistic bounds (800-3500). Check inputs."}), 400
+            
+        if not (1200 <= daily <= 4500):
+            return jsonify({"success": False, "error": f"Target calories {daily} out of bounds (1200-4500)."}), 400
+        
+        final_bmr = round(base_bmr)
+        final_tdee = round(tdee)
+        final_daily = round(daily)
+        
+        plan = generate_weekly_plan(final_daily, data.get("exclusions", []), diet_pref)
 
         rich_plan_data = {
             "weekly_plan": plan,
-            "target_cal": int(daily),
-            "bmr": int(base_bmr),
-            "tdee": int(tdee),
+            "target_cal": final_daily,
+            "bmr": final_bmr,
+            "tdee": final_tdee,
             "user_details": {
                 "age": user.age,
                 "weight": user.weight,
@@ -283,15 +426,15 @@ def api():
             "ai_advice": ai_insights.get("ai_advice", "Focus on balanced nutrition.")
         }
 
-        new_plan = WeeklyPlan(user_id=user.id, total_calories=int(daily), plan_data=rich_plan_data)
+        new_plan = WeeklyPlan(user_id=user.id, total_calories=final_daily, plan_data=rich_plan_data)
         db.session.add(new_plan); db.session.commit()
 
         return jsonify({
             "success": True, 
             "weekly_plan": plan, 
-            "target_cal": int(daily),
-            "bmr": int(base_bmr),
-            "tdee": int(tdee),
+            "target_cal": final_daily,
+            "bmr": final_bmr,
+            "tdee": final_tdee,
             "user_details": {
                 "age": user.age,
                 "weight": user.weight,
@@ -350,7 +493,8 @@ def get_specific_user(email):
             
         user_plans = []
         latest_diet = "vegetarian"
-        for plan in user.plans:
+        sorted_user_plans = sorted(user.plans, key=lambda p: p.plan_id, reverse=True)
+        for plan in sorted_user_plans:
             pdata = plan.plan_data
             if pdata:
                 if isinstance(pdata, str):
@@ -369,7 +513,7 @@ def get_specific_user(email):
                 "plan_data": plan.plan_data
             })
             
-        # Sort plans to get the newest one first
+        # Sort plans to get the newest one first (already sorted above but keeping logic)
         latest_bmr = 0
         latest_tdee = 0
         if len(user.plans) > 0:
@@ -922,8 +1066,37 @@ def replan_remaining():
         if clean_exclusions:
             fruit_options = [f for f in fruit_options if not any(ex in f["name"].lower() for ex in clean_exclusions)]
 
+        def format_generated_meal(food, target):
+            qty = optimize_meal_qty(food, target)
+            grams = int(round(qty * 100 / 5.0) * 5)
+            grams = max(50, min(400, grams))
+            cal_100g = food.get('calories_kcal', 0)
+            item_cal = int(round(grams * cal_100g / 100.0))
+            
+            p = int(round(grams * food.get('protein_g', 0) / 100.0))
+            c = int(round(grams * food.get('carbs_g', 0) / 100.0))
+            f = int(round(grams * food.get('fats_g', 0) / 100.0))
+            fi = int(round(grams * food.get('fiber_g', 0) / 100.0))
+            vit = int(round(grams * food.get('vitamin_c_mg', 0) / 100.0))
+            ca = int(round(grams * food.get('calcium_mg', 0) / 100.0))
+            fe = round(grams * food.get('iron_mg', 0) / 100.0, 1)
+            
+            fname = food['food_name']
+            name = f"{fname} - {grams}g"
+            # Return name (without kcal suffix for now, we'll build it) and the actual text block
+            text_block = f"{fname} - {grams}g ({item_cal} kcal | P:{p} C:{c} F:{f} Fi:{fi} V:{vit} Ca:{ca} Fe:{fe})"
+            return text_block, item_cal
+            
+        custom_macros = data.get("custom_macros")
+        custom_macro_str = ""
+        if custom_macros:
+            p, c, f = custom_macros.get("p",0), custom_macros.get("c",0), custom_macros.get("f",0)
+            custom_macro_str = f" | P:{p} C:{c} F:{f} Fi:0 V:0 Ca:0 Fe:0"
+
         if meal_type == "breakfast":
             remaining_cal = max(100, daily_cal - breakfast_cal)
+            if remaining_cal > 3000:
+                return jsonify({"success": False, "error": f"Remaining calories ({remaining_cal}) are too high to fit in remaining meals within portion limits."}), 400
             target_lunch = round(remaining_cal * (0.40 / 0.65))
             target_snack = round(remaining_cal * (0.15 / 0.65))
             target_dinner = round(remaining_cal * (0.10 / 0.65))
@@ -934,24 +1107,22 @@ def replan_remaining():
                 if not nv_pool.empty: lunch_pool = nv_pool
             if lunch_pool.empty: lunch_pool = base_pool
             lunch_food = get_ml_recommendation(lunch_pool, target_lunch)
-            lunch_qty = optimize_meal_qty(lunch_food, target_lunch)
-            lunch_cal = int(lunch_qty * lunch_food['calories_kcal'])
-            lunch_name = f"{lunch_food['food_name']} - {int(lunch_qty*100)}g"
+            lunch_name, lunch_cal = format_generated_meal(lunch_food, target_lunch)
             
             if fruit_options:
                 day_num = int(''.join(filter(str.isdigit, day)) or 1)
                 fruit = fruit_options[day_num % len(fruit_options)]
                 qty_snack = max(1, round(target_snack / fruit["cal"]))
+                if qty_snack > 4:
+                    return jsonify({"success": False, "error": f"Cannot reach target calories without exceeding portion caps (would need {qty_snack} {fruit['unit']}s)."}), 400
                 unit_str = format_fruit_unit(qty_snack, fruit["unit"])
                 snack_cal = int(qty_snack * fruit["cal"])
-                snack_name = f"[{qty_snack} {unit_str}] {fruit['name']}"
+                snack_name = f"[{qty_snack} {unit_str}] {fruit['name']} ({snack_cal} kcal | P:0 C:{round(snack_cal/4)} F:0 Fi:0 V:0 Ca:0 Fe:0.0)"
             else:
                 snack_pool = base_pool[base_pool["meal_type"] == "snacks"]
                 if snack_pool.empty: snack_pool = base_pool
                 snack_food = get_ml_recommendation(snack_pool, target_snack)
-                qty_snack = optimize_meal_qty(snack_food, target_snack)
-                snack_cal = int(qty_snack * snack_food['calories_kcal'])
-                snack_name = f"{snack_food['food_name']} - {int(qty_snack*100)}g"
+                snack_name, snack_cal = format_generated_meal(snack_food, target_snack)
                 
             dinner_pool = base_pool[base_pool["meal_type"] == "dinner"]
             if "non" in pref:
@@ -959,12 +1130,12 @@ def replan_remaining():
                 if not nv_pool.empty: dinner_pool = nv_pool
             if dinner_pool.empty: dinner_pool = base_pool
             dinner_food = get_ml_recommendation(dinner_pool, target_dinner)
-            dinner_qty = optimize_meal_qty(dinner_food, target_dinner)
-            dinner_cal = int(dinner_qty * dinner_food['calories_kcal'])
-            dinner_name = f"{dinner_food['food_name']} - {int(dinner_qty*100)}g"
+            dinner_name, dinner_cal = format_generated_meal(dinner_food, target_dinner)
 
         elif meal_type == "lunch":
             remaining_cal = max(100, daily_cal - breakfast_cal - lunch_cal)
+            if remaining_cal > 2000:
+                return jsonify({"success": False, "error": f"Remaining calories ({remaining_cal}) are too high to fit in remaining meals within portion limits."}), 400
             target_snack = round(remaining_cal * (0.15 / 0.25))
             target_dinner = round(remaining_cal * (0.10 / 0.25))
             
@@ -972,16 +1143,16 @@ def replan_remaining():
                 day_num = int(''.join(filter(str.isdigit, day)) or 1)
                 fruit = fruit_options[day_num % len(fruit_options)]
                 qty_snack = max(1, round(target_snack / fruit["cal"]))
+                if qty_snack > 4:
+                    return jsonify({"success": False, "error": f"Cannot reach target calories without exceeding portion caps (would need {qty_snack} {fruit['unit']}s)."}), 400
                 unit_str = format_fruit_unit(qty_snack, fruit["unit"])
                 snack_cal = int(qty_snack * fruit["cal"])
-                snack_name = f"[{qty_snack} {unit_str}] {fruit['name']}"
+                snack_name = f"[{qty_snack} {unit_str}] {fruit['name']} ({snack_cal} kcal | P:0 C:{round(snack_cal/4)} F:0 Fi:0 V:0 Ca:0 Fe:0.0)"
             else:
                 snack_pool = base_pool[base_pool["meal_type"] == "snacks"]
                 if snack_pool.empty: snack_pool = base_pool
                 snack_food = get_ml_recommendation(snack_pool, target_snack)
-                qty_snack = optimize_meal_qty(snack_food, target_snack)
-                snack_cal = int(qty_snack * snack_food['calories_kcal'])
-                snack_name = f"{snack_food['food_name']} - {int(qty_snack*100)}g"
+                snack_name, snack_cal = format_generated_meal(snack_food, target_snack)
                 
             dinner_pool = base_pool[base_pool["meal_type"] == "dinner"]
             if "non" in pref:
@@ -989,12 +1160,12 @@ def replan_remaining():
                 if not nv_pool.empty: dinner_pool = nv_pool
             if dinner_pool.empty: dinner_pool = base_pool
             dinner_food = get_ml_recommendation(dinner_pool, target_dinner)
-            dinner_qty = optimize_meal_qty(dinner_food, target_dinner)
-            dinner_cal = int(dinner_qty * dinner_food['calories_kcal'])
-            dinner_name = f"{dinner_food['food_name']} - {int(dinner_qty*100)}g"
+            dinner_name, dinner_cal = format_generated_meal(dinner_food, target_dinner)
 
         elif meal_type == "snack":
             remaining_cal = max(100, daily_cal - breakfast_cal - lunch_cal - snack_cal)
+            if remaining_cal > 1500:
+                return jsonify({"success": False, "error": f"Remaining calories ({remaining_cal}) are too high to fit in remaining meals within portion limits."}), 400
             target_dinner = remaining_cal
             
             dinner_pool = base_pool[base_pool["meal_type"] == "dinner"]
@@ -1003,43 +1174,28 @@ def replan_remaining():
                 if not nv_pool.empty: dinner_pool = nv_pool
             if dinner_pool.empty: dinner_pool = base_pool
             dinner_food = get_ml_recommendation(dinner_pool, target_dinner)
-            dinner_qty = optimize_meal_qty(dinner_food, target_dinner)
-            dinner_cal = int(dinner_qty * dinner_food['calories_kcal'])
-            dinner_name = f"{dinner_food['food_name']} - {int(dinner_qty*100)}g"
+            dinner_name, dinner_cal = format_generated_meal(dinner_food, target_dinner)
 
         elif meal_type == "dinner":
             pass
 
         total_day_cal = breakfast_cal + lunch_cal + snack_cal + dinner_cal
         
+        # Build the exact line blocks so we don't append (X kcal) twice if it's already in the string.
+        def format_final_line(name, cal, fallback_mac=""):
+            if "kcal" in name: return name
+            return f"{name} ({cal} kcal{fallback_mac})"
+
         day_lines = [
             f"DAY_MARKER_{day.split()[-1]}",
-            f"[BREAKFAST]: {breakfast_name} ({breakfast_cal} kcal) [END_MEAL]",
-            f"[LUNCH]: {lunch_name} ({lunch_cal} kcal) [END_MEAL]",
-            f"[SNACK]: {snack_name} ({snack_cal} kcal) [END_MEAL]" if "kcal" not in snack_name else f"[SNACK]: {snack_name} [END_MEAL]",
-            f"[DINNER]: {dinner_name} ({dinner_cal} kcal) [END_MEAL]",
+            f"[BREAKFAST]: {format_final_line(breakfast_name, breakfast_cal, custom_macro_str if meal_type == 'breakfast' else '')} [END_MEAL]",
+            f"[LUNCH]: {format_final_line(lunch_name, lunch_cal, custom_macro_str if meal_type == 'lunch' else '')} [END_MEAL]",
+            f"[SNACK]: {format_final_line(snack_name, snack_cal, custom_macro_str if meal_type == 'snack' else '')} [END_MEAL]",
+            f"[DINNER]: {format_final_line(dinner_name, dinner_cal, custom_macro_str if meal_type == 'dinner' else '')} [END_MEAL]",
             f"[CALORIE_COUNT]: {total_day_cal}"
         ]
         
-        formatted_day_lines = []
-        for line in day_lines:
-            if line.startswith("[SNACK]:"):
-                content = line.replace("[SNACK]:", "").replace("[END_MEAL]", "").strip()
-                if "kcal" not in content:
-                    content = f"{content} ({snack_cal} kcal)"
-                formatted_day_lines.append(f"[SNACK]: {content} [END_MEAL]")
-            elif line.startswith("[LUNCH]:"):
-                content = line.replace("[LUNCH]:", "").replace("[END_MEAL]", "").strip()
-                if "kcal" not in content:
-                    content = f"{content} ({lunch_cal} kcal)"
-                formatted_day_lines.append(f"[LUNCH]: {content} [END_MEAL]")
-            elif line.startswith("[DINNER]:"):
-                content = line.replace("[DINNER]:", "").replace("[END_MEAL]", "").strip()
-                if "kcal" not in content:
-                    content = f"{content} ({dinner_cal} kcal)"
-                formatted_day_lines.append(f"[DINNER]: {content} [END_MEAL]")
-            else:
-                formatted_day_lines.append(line)
+        formatted_day_lines = day_lines
         
         if is_nested:
             plan_data["weekly_plan"][day] = "\n".join(formatted_day_lines)

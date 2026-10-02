@@ -13,6 +13,13 @@ const DashboardLayout = () => {
   const location = useLocation();
   const [userName, setUserName] = useState(localStorage.getItem("userName") || "User");
   const [userEmail, setUserEmail] = useState(localStorage.getItem("currentUserEmail") || "guest@example.com");
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
   
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -62,6 +69,7 @@ const DashboardLayout = () => {
     } else {
       document.documentElement.classList.remove('dark');
     }
+    window.dispatchEvent(new Event("themeUpdated"));
   };
 
   useEffect(() => {
@@ -88,15 +96,21 @@ const DashboardLayout = () => {
       } catch(e) {}
     };
 
+    const handleThemeUpdate = () => {
+      setIsDarkMode(localStorage.getItem('theme') === 'dark');
+    };
+
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("profilePicUpdated", handleStorageChange);
     window.addEventListener("profileUpdated", handleStorageChange);
     window.addEventListener("newNotification", handleNewNotification);
+    window.addEventListener("themeUpdated", handleThemeUpdate);
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("profilePicUpdated", handleStorageChange);
       window.removeEventListener("profileUpdated", handleStorageChange);
       window.removeEventListener("newNotification", handleNewNotification);
+      window.removeEventListener("themeUpdated", handleThemeUpdate);
     };
   }, []);
 
@@ -155,7 +169,7 @@ const DashboardLayout = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white tracking-wide">
-                  Foodie <span className="font-extrabold text-theme-primary-light bg-white/10 px-1.5 py-0.5 rounded">AI</span>
+                  Foodie <span className="font-extrabold text-theme-accent bg-white/10 px-1.5 py-0.5 rounded">AI</span>
                 </h1>
                 <p className="text-[10px] text-white/70 tracking-wider uppercase mt-1 font-semibold">Nutrition Recommender</p>
               </div>
@@ -304,7 +318,7 @@ const DashboardLayout = () => {
                     <FontAwesomeIcon icon={faUser} className="text-theme-primary text-xs" />
                   )}
                 </div>
-                <span className="text-sm font-bold text-theme-text hidden md:block">Good Morning, {userName}!</span>
+                <span className="text-sm font-bold text-theme-text hidden md:block">{getGreeting()}, {userName}!</span>
                 <FontAwesomeIcon icon={faChevronDown} className="text-theme-muted text-xs hidden md:block" />
               </div>
 
