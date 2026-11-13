@@ -18,14 +18,18 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 app = Flask(__name__)
 CORS(app)
 
 # ---------------- DATABASE CONFIGURATION ----------------
-# Using local PostgreSQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:lokesh%4011@localhost:5432/foodie_db'
+# Use environment variable DATABASE_URL if available, else local PostgreSQL
+db_url = os.getenv('DATABASE_URL', 'postgresql://postgres:lokesh%4011@localhost:5432/foodie_db')
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -61,6 +65,7 @@ with app.app_context():
 
 # ---------------- LLM CONFIGURATION ----------------
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 def extract_json(text):
     text = text.strip()
@@ -92,7 +97,7 @@ def generate_ai_insights(user_profile, symptoms):
     Every single property name MUST be enclosed in double quotes. Do not use single quotes.
     """
     try:
-        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
+        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
         clean_text = extract_json(response.text)
         return json.loads(clean_text)
     except Exception as e:
@@ -760,7 +765,7 @@ def chat():
         User's Question: {message}
         """
 
-        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
+        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
         return jsonify({"success": True, "reply": response.text.strip()})
     except Exception as e:
         print("Chat coach error:", e)
@@ -795,7 +800,7 @@ def get_recipe():
         Output ONLY raw JSON. Do not wrap in markdown ```json or include any text before or after the JSON.
         """
         
-        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
+        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
         clean_text = extract_json(response.text)
         recipe_json = json.loads(clean_text)
         return jsonify({"success": True, "recipe": recipe_json})
@@ -923,7 +928,7 @@ def estimate_calories():
 
         CRITICAL INSTRUCTIONS: Output ONLY valid JSON. Do not include markdown formatting like ```json.
         """
-        response = client.models.generate_content(model='gemini-3.5-flash', contents=prompt)
+        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
         clean_text = extract_json(response.text)
         result = json.loads(clean_text)
         
@@ -1136,15 +1141,12 @@ def replan_remaining():
             remaining_cal = max(100, daily_cal - breakfast_cal - lunch_cal)
             if remaining_cal > 2000:
                 return jsonify({"success": False, "error": f"Remaining calories ({remaining_cal}) are too high to fit in remaining meals within portion limits."}), 400
-            target_snack = round(remaining_cal * (0.15 / 0.25))
-            target_dinner = round(remaining_cal * (0.10 / 0.25))
+            target_snack = min(round(daily_cal * 0.15), round(remaining_cal * 0.25))
             
             if fruit_options:
                 day_num = int(''.join(filter(str.isdigit, day)) or 1)
                 fruit = fruit_options[day_num % len(fruit_options)]
-                qty_snack = max(1, round(target_snack / fruit["cal"]))
-                if qty_snack > 4:
-                    return jsonify({"success": False, "error": f"Cannot reach target calories without exceeding portion caps (would need {qty_snack} {fruit['unit']}s)."}), 400
+                qty_snack = min(4, max(1, round(target_snack / fruit["cal"])))
                 unit_str = format_fruit_unit(qty_snack, fruit["unit"])
                 snack_cal = int(qty_snack * fruit["cal"])
                 snack_name = f"[{qty_snack} {unit_str}] {fruit['name']} ({snack_cal} kcal | P:0 C:{round(snack_cal/4)} F:0 Fi:0 V:0 Ca:0 Fe:0.0)"
@@ -1154,6 +1156,7 @@ def replan_remaining():
                 snack_food = get_ml_recommendation(snack_pool, target_snack)
                 snack_name, snack_cal = format_generated_meal(snack_food, target_snack)
                 
+            target_dinner = max(100, remaining_cal - snack_cal)
             dinner_pool = base_pool[base_pool["meal_type"] == "dinner"]
             if "non" in pref:
                 nv_pool = dinner_pool[dinner_pool["food_type"] == "non-vegetarian"]
@@ -1229,4 +1232,5 @@ def replan_remaining():
         return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=5000)
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", debug=True, port=port)

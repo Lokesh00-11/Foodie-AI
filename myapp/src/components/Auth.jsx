@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeartbeat, faLock, faEnvelope, faUser, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import API_BASE_URL from '../apiConfig';
 
 const Auth = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -41,7 +42,7 @@ const Auth = () => {
       }
       setLoading(true);
       try {
-        const response = await axios.post(`http://${window.location.hostname}:5000/api/register`, {
+        const response = await axios.post(`${API_BASE_URL}/api/register`, {
           name,
           email,
           password
@@ -61,7 +62,7 @@ const Auth = () => {
       // Login Logic
       setLoading(true);
       try {
-        const response = await axios.post(`http://${window.location.hostname}:5000/api/login`, {
+        const response = await axios.post(`${API_BASE_URL}/api/login`, {
           email,
           password
         });

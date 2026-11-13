@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faHome, faUserEdit, faTrash, faEye, faCamera, faUser } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,7 +16,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get(`http://${window.location.hostname}:5000/api/user/${userEmail}`);
+        const response = await axios.get(`${API_BASE_URL}/api/user/${userEmail}`);
         if (response.data.success) {
           setHistory(response.data.history.reverse());
         }
@@ -55,7 +56,7 @@ const Dashboard = () => {
   const deleteEntry = async (id) => {
     if (window.confirm("are you sure to confirm the action")) {
       try {
-        const response = await axios.delete(`http://${window.location.hostname}:5000/api/plan/${id}`);
+        const response = await axios.delete(`${API_BASE_URL}/api/plan/${id}`);
         if (response.data.success) {
           setHistory(history.filter(entry => entry.plan_id !== id));
           alert("Plan removed from view.");

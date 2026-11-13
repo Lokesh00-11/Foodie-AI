@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faFire, faAppleAlt, faArrowRight, faWeight, faRulerVertical, 
@@ -163,7 +164,7 @@ const TrackerDashboard = () => {
     }
     setEstimatingLoading(true);
     try {
-      const res = await axios.post(`http://${window.location.hostname}:5000/api/estimate-calories`, {
+      const res = await axios.post(`${API_BASE_URL}/api/estimate-calories`, {
         food_name: customMealName,
         quantity: parseFloat(customMealQty || 1),
         unit: customMealUnit
@@ -243,7 +244,7 @@ const TrackerDashboard = () => {
       
       // If past the hour limit, meal is not checked, and they haven't been notified today
       if (currentHour >= meal.hourLimit && !eatenMeals[meal.key] && !wasNotified) {
-        axios.post(`http://${window.location.hostname}:5000/api/notify-forgot-meal`, { 
+        axios.post(`${API_BASE_URL}/api/notify-forgot-meal`, { 
           email: userEmail,
           meal_type: meal.type
         })
@@ -386,7 +387,7 @@ const TrackerDashboard = () => {
         exclusions: exclusions
       };
 
-      const res = await axios.post(`http://${window.location.hostname}:5000/api/replan-remaining`, payload);
+      const res = await axios.post(`${API_BASE_URL}/api/replan-remaining`, payload);
       if (res.data.success) {
         const mealData = { 
           name: customMealName, 
@@ -417,7 +418,8 @@ const TrackerDashboard = () => {
       }
     } catch (err) {
       console.error("Failed to replan remaining meals:", err);
-      alert("Failed to replan meals. Confirm your backend is running.");
+      const errMsg = err.response?.data?.error || "Failed to replan meals. Confirm your backend is running.";
+      alert(errMsg);
     } finally {
       setReplanLoading(false);
     }
@@ -448,7 +450,7 @@ const TrackerDashboard = () => {
     // Fetch latest user details and plan history from the backend
     const fetchLatestDetails = async () => {
       try {
-        const response = await axios.get(`http://${window.location.hostname}:5000/api/user/${userEmail}`);
+        const response = await axios.get(`${API_BASE_URL}/api/user/${userEmail}`);
         if (response.data.success && response.data.history.length > 0) {
           const latestPlan = response.data.history[0]; // Newest plan
           setHasPlan(true);

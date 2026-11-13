@@ -1,0 +1,11 @@
+Flask>=3.1.2
+flask-cors>=6.0.2
+Flask-SQLAlchemy>=3.1.1
+psycopg2-binary>=2.9.12
+pandas>=2.3.3
+scikit-learn>=1.7.2
+numpy>=2.2.6
+google-genai>=1.62.0
+PuLP>=3.3.0
+python-dotenv>=1.2.2
+gunicorn>=23.0.0

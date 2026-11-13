@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faPaperPlane, faSpinner, faRobot, faUser, 
@@ -59,7 +60,7 @@ const AICoach = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`http://${window.location.hostname}:5000/api/chat`, {
+      const response = await axios.post(`${API_BASE_URL}/api/chat`, {
         email: userEmail,
         message: text
       });

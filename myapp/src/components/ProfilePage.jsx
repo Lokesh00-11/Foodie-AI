@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faUser, faUserEdit, faEnvelope, faPhone, faSave, faCheck } from '@fortawesome/free-solid-svg-icons';
 
@@ -33,7 +34,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://${window.location.hostname}:5000/api/user/${userEmail}`);
+        const response = await axios.get(`${API_BASE_URL}/api/user/${userEmail}`);
         if (response.data.success) {
           setUserDetails(response.data.user_info);
           setNewName(response.data.user_info.name !== "User" ? response.data.user_info.name : localStorage.getItem("userName") || "");
@@ -70,7 +71,7 @@ const ProfilePage = () => {
       window.dispatchEvent(new Event("profilePicUpdated"));
       
       try {
-        await axios.post(`http://${window.location.hostname}:5000/api/update-profile-pic`, {
+        await axios.post(`${API_BASE_URL}/api/update-profile-pic`, {
           email: userEmail,
           profile_pic: base64String
         });
@@ -96,7 +97,7 @@ const ProfilePage = () => {
     const formattedPhone = newPhone ? `+91 ${newPhone}` : "";
 
     try {
-      const response = await axios.post(`http://${window.location.hostname}:5000/api/update-profile`, {
+      const response = await axios.post(`${API_BASE_URL}/api/update-profile`, {
         old_email: userEmail,
         name: newName,
         phone: formattedPhone
@@ -122,7 +123,7 @@ const ProfilePage = () => {
 
   const initiateEmailUpdate = async () => {
     try {
-      const response = await axios.post(`http://${window.location.hostname}:5000/api/send-otp`, { email: userEmail });
+      const response = await axios.post(`${API_BASE_URL}/api/send-otp`, { email: userEmail });
       if (response.data.success) {
         setEmailUpdateState('verifying');
       } else {
@@ -135,7 +136,7 @@ const ProfilePage = () => {
 
   const verifyOtp = async () => {
     try {
-      const response = await axios.post(`http://${window.location.hostname}:5000/api/verify-otp`, { email: userEmail, otp });
+      const response = await axios.post(`${API_BASE_URL}/api/verify-otp`, { email: userEmail, otp });
       if (response.data.success) {
         setEmailUpdateState('updating');
       } else {
@@ -155,7 +156,7 @@ const ProfilePage = () => {
     }
 
     try {
-      const response = await axios.post(`http://${window.location.hostname}:5000/api/update-profile`, {
+      const response = await axios.post(`${API_BASE_URL}/api/update-profile`, {
         old_email: userEmail,
         new_email: newEmail
       });

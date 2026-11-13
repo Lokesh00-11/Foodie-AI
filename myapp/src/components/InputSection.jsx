@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faSpinner, faUndo, faArrowRight, faArrowLeft, 
@@ -142,7 +143,7 @@ const InputSection = () => {
         email: userEmail || "guest@example.com" 
       };
 
-      const res = await axios.post(`http://${window.location.hostname}:5000/api/nutrition`, payload);
+      const res = await axios.post(`${API_BASE_URL}/api/nutrition`, payload);
       
       // Store generated plan as active
       localStorage.setItem("activePlan", JSON.stringify({

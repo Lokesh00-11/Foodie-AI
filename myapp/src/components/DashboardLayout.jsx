@@ -6,6 +6,7 @@ import {
   faCog, faHome, faUser, faUtensils, faSearch, faBell, faChevronDown, faCamera, faMoon, faSun, faBars, faTimes
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 
 const DashboardLayout = () => {
   const navigate = navigateTo => navigate(navigateTo);
@@ -44,7 +45,7 @@ const DashboardLayout = () => {
       setShowRecipeModal(true);
       setRecipeError("");
       try {
-        const response = await axios.post(`http://${window.location.hostname}:5000/api/recipe`, {
+        const response = await axios.post(`${API_BASE_URL}/api/recipe`, {
           food_name: searchQuery.trim()
         });
         if (response.data.success) {
@@ -126,7 +127,7 @@ const DashboardLayout = () => {
       window.dispatchEvent(new Event("profilePicUpdated"));
       
       try {
-        await axios.post(`http://${window.location.hostname}:5000/api/update-profile-pic`, {
+        await axios.post(`${API_BASE_URL}/api/update-profile-pic`, {
           email: userEmail,
           profile_pic: base64String
         });

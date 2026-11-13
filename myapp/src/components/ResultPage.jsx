@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import axios from 'axios';
+import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faHome, faArrowLeft, faFire, faLightbulb, faStethoscope, 
@@ -70,7 +71,7 @@ const ResultPage = () => {
   useEffect(() => {
     const fetchLatestPlan = async () => {
       try {
-        const res = await axios.get(`http://${window.location.hostname}:5000/api/user/${userEmail}`);
+        const res = await axios.get(`${API_BASE_URL}/api/user/${userEmail}`);
         if (res.data.success && res.data.history && res.data.history.length > 0) {
           const latestPlan = res.data.history[0];
           
@@ -200,7 +201,7 @@ const ResultPage = () => {
     }
     setEstimatingLoading(true);
     try {
-      const res = await axios.post(`http://${window.location.hostname}:5000/api/estimate-calories`, {
+      const res = await axios.post(`${API_BASE_URL}/api/estimate-calories`, {
         food_name: customBName,
         quantity: parseFloat(customBQty || 1),
         unit: customBUnit
@@ -238,7 +239,7 @@ const ResultPage = () => {
         exclusions: exclusions
       };
 
-      const res = await axios.post(`http://${window.location.hostname}:5000/api/replan-remaining`, payload);
+      const res = await axios.post(`${API_BASE_URL}/api/replan-remaining`, payload);
       if (res.data.success) {
         setCurrentPlan(res.data.weekly_plan);
         if (activePlan) {
@@ -256,7 +257,8 @@ const ResultPage = () => {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to replan meals. Ensure backend is running.");
+      const errMsg = err.response?.data?.error || "Failed to replan meals. Ensure backend is running.";
+      alert(errMsg);
     } finally {
       setReplanProgress(false);
     }
@@ -270,7 +272,7 @@ const ResultPage = () => {
     setLoadingRecipe(true);
     setRecipeData(null);
     try {
-      const response = await axios.post(`http://${window.location.hostname}:5000/api/recipe`, {
+      const response = await axios.post(`${API_BASE_URL}/api/recipe`, {
         food_name: rawName
       });
       if (response.data.success) {
@@ -380,7 +382,7 @@ const ResultPage = () => {
         diet_preference: editFormData.diet
       };
 
-      const response = await fetch("http://localhost:5000/api/nutrition", {
+      const response = await fetch(`${API_BASE_URL}/api/nutrition`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
