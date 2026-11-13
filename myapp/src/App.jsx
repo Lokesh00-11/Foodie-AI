@@ -20,7 +20,7 @@ function App() {
   }, []);
 
   return (
-    <Router basename={import.meta.env.BASE_URL}>
+    <Router basename={window.location.pathname.startsWith('/Foodie-AI') ? '/Foodie-AI' : (import.meta.env.BASE_URL || '/')}>
       <Routes>
         {/* Public authentication route */}
         <Route path="/auth" element={<Auth />} />

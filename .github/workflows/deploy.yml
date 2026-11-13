@@ -6,19 +6,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  contents: write
 
 jobs:
   build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,21 +29,13 @@ jobs:
       - name: Build frontend
         working-directory: ./myapp
         run: npm run build
-        env:
-          VITE_BASE_PATH: '/Foodie-AI/'
 
       - name: Copy index.html to 404.html for SPA routing
         working-directory: ./myapp
         run: cp dist/index.html dist/404.html
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './myapp/dist'
-
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: myapp/dist
+          branch: gh-pages
