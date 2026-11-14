@@ -10,9 +10,29 @@ const WorkoutsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Grab Goal and Gender from the ResultPage state
-  const rawGoal = location.state?.goal?.toLowerCase() || "maintenance";
-  const userGender = location.state?.gender?.toLowerCase() || "male"; // "male" or "female"
+  // Grab Goal and Gender from location.state OR activePlan in localStorage OR fallback
+  let activePlanData = {};
+  try {
+    activePlanData = JSON.parse(localStorage.getItem("activePlan") || "{}");
+  } catch (e) {
+    activePlanData = {};
+  }
+  const metrics = activePlanData.metrics || {};
+  const userDetails = activePlanData.user_details || {};
+
+  const rawGoal = location.state?.goal?.toLowerCase() 
+    || metrics.goal?.toLowerCase() 
+    || userDetails.goal?.toLowerCase() 
+    || localStorage.getItem("userGoal")?.toLowerCase() 
+    || "maintenance";
+
+  const rawGender = location.state?.gender?.toLowerCase() 
+    || metrics.gender?.toLowerCase() 
+    || userDetails.gender?.toLowerCase() 
+    || localStorage.getItem("userGender")?.toLowerCase() 
+    || "male";
+    
+  const userGender = rawGender.includes("female") ? "female" : "male";
   
   // 🔥 MAP STRICTLY TO YOUR 5 DROPDOWN GOALS
   let activeGoal = "maintenance";
@@ -65,16 +85,25 @@ const WorkoutsPage = () => {
 
   // 🔥 2. DYNAMIC LOCAL VIDEO FETCHER
   const getWorkoutVideoUrl = (exerciseName) => {
-    // Formats "Push Ups" into "push-ups" to match your downloaded file names
+    // Formats "Push Ups" into "push-ups" to match downloaded file names
     const formattedName = exerciseName.trim().toLowerCase().replace(/\s+/g, '-');
+    const gender = userGender;
     
-    // Points to the public/assets/videos folder 
-    return `/assets/videos/${userGender.trim().toLowerCase()}/${formattedName}.mp4?v=7`; 
+    // Support both local development and GitHub Pages subpath (/Foodie-AI)
+    let base = import.meta.env.BASE_URL || '/';
+    if (!base.endsWith('/')) base += '/';
+    
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/Foodie-AI') && !base.includes('Foodie-AI')) {
+      base = '/Foodie-AI/';
+    }
+    
+    return `${base}assets/videos/${gender}/${formattedName}.mp4`; 
   };
 
   const [loadingVideos, setLoadingVideos] = useState(
     currentRoutine.reduce((acc, _, idx) => ({ ...acc, [idx]: true }), {})
   );
+  const [videoErrors, setVideoErrors] = useState({});
 
   const handleVideoLoad = (index) => {
     setLoadingVideos(prev => ({ ...prev, [index]: false }));
@@ -244,18 +273,31 @@ const WorkoutsPage = () => {
                   autoPlay
                   loop
                   muted
+                  defaultMuted
                   playsInline
-                  className={`w-full h-full object-cover ${loadingVideos[index] ? 'hidden' : 'block'}`}
+                  ref={el => { if (el) el.muted = true; }}
+                  className={`w-full h-full object-cover ${loadingVideos[index] || videoErrors[index] ? 'hidden' : 'block'}`}
                   onLoadedData={() => handleVideoLoad(index)}
                   onError={(e) => {
-                    // Logs to console if you haven't downloaded this exercise's MP4 yet
-                    console.error("Missing video file:", e.target.src);
-                    
-                    // Hides the broken video icon to keep the UI clean
-                    e.target.style.display = 'none'; 
+                    const currentSrc = e.currentTarget.currentSrc || e.currentTarget.src || '';
+                    // If hosted on GitHub Pages and missing /Foodie-AI prefix, auto retry
+                    if (window.location.pathname.startsWith('/Foodie-AI') && !currentSrc.includes('/Foodie-AI/')) {
+                      const path = currentSrc.replace(window.location.origin, '');
+                      e.currentTarget.src = `${window.location.origin}/Foodie-AI${path.startsWith('/') ? path : '/' + path}`;
+                      return;
+                    }
+                    console.error("Missing video file:", currentSrc);
+                    setVideoErrors(prev => ({ ...prev, [index]: true }));
                     handleVideoLoad(index);
                   }}
                 />
+                {videoErrors[index] && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 p-4 text-center z-10">
+                    <FontAwesomeIcon icon={faDumbbell} className="text-3xl text-emerald-400 mb-2" />
+                    <span className="text-sm font-extrabold text-white">{exercise.name}</span>
+                    <span className="text-xs text-emerald-300 font-semibold mt-1">{exercise.sets} Sets • {exercise.reps}</span>
+                  </div>
+                )}
                 <div className="absolute top-3 right-3 bg-slate-900/80 text-white px-3 py-1.5 rounded-lg text-xs font-bold backdrop-blur-sm z-20">{exercise.type}</div>
               </div>
               

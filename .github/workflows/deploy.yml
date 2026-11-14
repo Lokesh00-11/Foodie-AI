@@ -29,6 +29,8 @@ jobs:
       - name: Build frontend
         working-directory: ./myapp
         run: npm run build
+        env:
+          VITE_BASE_PATH: /Foodie-AI/
 
       - name: Add .nojekyll and 404.html for SPA routing
         working-directory: ./myapp
