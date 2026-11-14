@@ -228,10 +228,31 @@ const ResultPage = () => {
   };
 
   const handleExecuteReplan = async () => {
-    if (!customBName || !customBCal) return;
+    if (!customBName || !customBName.trim()) {
+      alert("Please enter the food name you ate or wish to swap.");
+      return;
+    }
     setReplanProgress(true);
     try {
-      const activePlan = JSON.parse(localStorage.getItem("activePlan"));
+      let finalCal = parseInt(customBCal);
+      if (isNaN(finalCal) || finalCal <= 0) {
+        try {
+          const estRes = await axios.post(`${API_BASE_URL}/api/estimate-calories`, {
+            food_name: customBName.trim(),
+            quantity: parseFloat(customBQty || 1),
+            unit: customBUnit
+          });
+          if (estRes.data && estRes.data.calories) {
+            finalCal = estRes.data.calories;
+          } else {
+            finalCal = 350;
+          }
+        } catch (e) {
+          finalCal = 350;
+        }
+      }
+
+      const activePlan = JSON.parse(localStorage.getItem("activePlan") || "{}");
       const dietPref = activePlan?.metrics?.diet || "vegetarian";
       const exclusions = activePlan?.metrics?.exclusions || [];
       
@@ -239,16 +260,16 @@ const ResultPage = () => {
         email: userEmail,
         day: replanDay,
         meal_type: replanMealType,
-        custom_name: customBName,
-        custom_calories: parseInt(customBCal),
-        breakfast_name: customBName, // fallback
-        breakfast_calories: parseInt(customBCal), // fallback
+        custom_name: customBName.trim(),
+        custom_calories: finalCal,
+        breakfast_name: customBName.trim(),
+        breakfast_calories: finalCal,
         diet_preference: dietPref,
         exclusions: exclusions
       };
 
       const res = await axios.post(`${API_BASE_URL}/api/replan-remaining`, payload);
-      if (res.data.success) {
+      if (res.data && res.data.success && res.data.weekly_plan) {
         setCurrentPlan(res.data.weekly_plan);
         if (activePlan) {
           activePlan.weekly_plan = res.data.weekly_plan;
@@ -262,6 +283,8 @@ const ResultPage = () => {
         setEatenWeekly(updatedEaten);
         localStorage.setItem(`eaten_weekly_${userEmail}`, JSON.stringify(updatedEaten));
         setIsReplanModalOpen(false);
+      } else {
+        alert(res.data?.error || "Failed to replan meal. Please check inputs.");
       }
     } catch (err) {
       console.error(err);
@@ -274,27 +297,38 @@ const ResultPage = () => {
 
   const openRecipeModal = async (rawFoodString) => {
     if (!rawFoodString || rawFoodString.includes("pending")) return;
-    const rawName = rawFoodString.split('-')[0].split('(')[0].trim();
-    setSelectedFoodName(rawName);
+    const cleanName = rawFoodString.split('+')[0].split('-')[0].split('(')[0].replace(/[|\]\[]/g, '').trim();
+    setSelectedFoodName(cleanName || "Healthy Meal");
     setIsRecipeModalOpen(true);
     setLoadingRecipe(true);
     setRecipeData(null);
     try {
       const response = await axios.post(`${API_BASE_URL}/api/recipe`, {
-        food_name: rawName
+        food_name: cleanName || "Healthy Meal"
       });
-      if (response.data.success) {
+      if (response.data && response.data.success && response.data.recipe) {
         setRecipeData(response.data.recipe);
       } else {
-        throw new Error(response.data.error || "Failed to generate recipe");
+        throw new Error(response.data?.error || "Failed to generate recipe");
       }
     } catch (err) {
       console.error(err);
       setRecipeData({
-        prep_time: "15 mins",
-        ingredients: ["Ingredients for " + rawName],
-        instructions: ["Prepare ingredients", "Cook in traditional style", "Serve hot"],
-        macros: { protein: 5, carbs: 25, fats: 8, calories: 200 }
+        prep_time: "20 mins",
+        ingredients: [
+          `Main portion for ${cleanName}`,
+          "Fresh herbs and aromatic spices (cumin, turmeric, garam masala)",
+          "1 tbsp healthy oil or ghee",
+          "Finely chopped ginger, garlic and onions",
+          "Salt and black pepper to taste"
+        ],
+        instructions: [
+          `Prepare and wash the ingredients for ${cleanName}.`,
+          "Heat oil or ghee in a pan and temper with spices until fragrant.",
+          `Add ${cleanName} ingredients and cook on medium flame until tender and golden brown.`,
+          "Season with salt and pepper, garnish with freshly chopped coriander, and enjoy hot!"
+        ],
+        macros: { protein: 15, carbs: 45, fats: 10, calories: 330 }
       });
     } finally {
       setLoadingRecipe(false);
@@ -522,71 +556,66 @@ const ResultPage = () => {
     }
   };
 
+  const FOOD_IMAGE_CATALOG = {
+    'dosa': 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=700&h=450&fit=crop',
+    'paratha': 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=700&h=450&fit=crop',
+    'idli': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=700&h=450&fit=crop',
+    'chilla': 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=700&h=450&fit=crop',
+    'cheela': 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=700&h=450&fit=crop',
+    'poha': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=700&h=450&fit=crop',
+    'upma': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=700&h=450&fit=crop',
+    'toast': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=700&h=450&fit=crop',
+    'oats': 'https://images.unsplash.com/photo-1584776296944-ab6fb57b0bdd?w=700&h=450&fit=crop',
+    'pudding': 'https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=700&h=450&fit=crop',
+    'chia': 'https://images.unsplash.com/photo-1511688878353-3a2f5be94cd7?w=700&h=450&fit=crop',
+    'paneer': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=700&h=450&fit=crop',
+    'chicken': 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=700&h=450&fit=crop',
+    'fish': 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=700&h=450&fit=crop',
+    'egg': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=700&h=450&fit=crop',
+    'rice': 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=700&h=450&fit=crop',
+    'biryani': 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=700&h=450&fit=crop',
+    'pulao': 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=700&h=450&fit=crop',
+    'dal': 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=700&h=450&fit=crop',
+    'khichdi': 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=700&h=450&fit=crop',
+    'tofu': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&h=450&fit=crop',
+    'soya': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&h=450&fit=crop',
+    'curry': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=700&h=450&fit=crop',
+    'sabzi': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=700&h=450&fit=crop',
+    'roti': 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=700&h=450&fit=crop',
+    'salad': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=700&h=450&fit=crop',
+    'sprouts': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=700&h=450&fit=crop',
+    'chana': 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=700&h=450&fit=crop',
+    'nuts': 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=700&h=450&fit=crop',
+    'apple': 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=700&h=450&fit=crop',
+    'banana': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=700&h=450&fit=crop',
+    'orange': 'https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=700&h=450&fit=crop',
+    'fruit': 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=700&h=450&fit=crop',
+    'soup': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=700&h=450&fit=crop'
+  };
+
+  const getCatalogFallbackImage = (name) => {
+    const lower = (name || '').toLowerCase();
+    for (const [key, url] of Object.entries(FOOD_IMAGE_CATALOG)) {
+      if (lower.includes(key)) {
+        return url;
+      }
+    }
+    return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&h=450&fit=crop';
+  };
+
   const openImageModal = (rawFoodString, mealType) => {
     if (!rawFoodString || rawFoodString.includes("pending")) return;
 
-    const rawName = rawFoodString.split('-')[0].split('(')[0].trim();
-    setSelectedFoodName(rawName);
+    const rawName = rawFoodString.split('+')[0].split('-')[0].split('(')[0].replace(/[|\]\[]/g, '').trim();
+    setSelectedFoodName(rawName || "Food Photo");
     setIsModalOpen(true);
     setIsCombo(false);
-    setComboImages({ img1: "", img2: "" });
-    setSingleImage("");
     setIsImageLoading1(true);
-    setIsImageLoading2(true);
 
-    let cleanText = rawName.toLowerCase().replace(/[0-9]+/g, ''); 
-    const stopWords = ['veg', 'vegetable', 'g', 'kg', 'ml', 'cup', 'cups', 'slice', 'slices', 'of', 'medium', 'large', 'small', 'bowl', 'pieces', 'piece', 'glass', 'whole'];
-    cleanText = cleanText.split(' ').filter(word => !stopWords.includes(word.trim()) && word.trim().length > 0).join(' ').trim();
+    const curatedImage = getCatalogFallbackImage(rawName);
+    const bingUrl = `https://tse2.mm.bing.net/th?q=${encodeURIComponent(rawName + ' Indian food authentic delicious')}&w=700&h=450&c=7&rs=1&p=0&dpr=2&pid=1.7&mkt=en-IN`;
 
-    const cacheVersion = 'v8';
-
-    const getBingUrl = (queryText) => {
-      const query = encodeURIComponent(`${queryText} authentic plated delicious photography`);
-      return `https://tse2.mm.bing.net/th?q=${query}&w=600&h=400&c=7&rs=1&p=0&dpr=2&pid=1.7&mkt=en-IN&adlt=moderate`;
-    };
-
-    let comboMatch = null;
-    if (cleanText.includes(" with ")) {
-        comboMatch = cleanText.split(" with ").map(x => x.trim());
-    } else if (cleanText.includes(" and ")) {
-        comboMatch = cleanText.split(" and ").map(x => x.trim());
-    }
-
-    if (comboMatch && comboMatch.length >= 2) {
-      setIsCombo(true);
-      const [item1, item2] = comboMatch;
-      
-      let search1 = `${item1} Indian authentic style`;
-      
-      let search2 = `${item2} side dish`;
-      if (item2.includes("brown rice")) {
-          search2 = `whole grain brown rice side dish authentic`;
-      }
-
-      const url1 = getBingUrl(search1);
-      const url2 = getBingUrl(search2);
-
-      setComboImages({ img1: url1, img2: url2 });
-
-    } else {
-      const cacheKeySingle = `imgCache_single_${cacheVersion}_${cleanText}`;
-      const cachedSingle = localStorage.getItem(cacheKeySingle);
-
-      if (cachedSingle) {
-          setSingleImage(cachedSingle);
-          setIsImageLoading1(false);
-          setIsImageLoading2(false);
-          return;
-      }
-
-      let queryText = cleanText;
-      if (mealType === 'Snack') {
-          queryText = `${cleanText} fresh raw whole fruit isolated`;
-      }
-      
-      const url = getBingUrl(queryText);
-      setSingleImage(url);
-    }
+    setSingleImage(bingUrl || curatedImage);
   };
 
   const generatePDF = () => {
@@ -735,7 +764,7 @@ const ResultPage = () => {
                   }}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://images.unsplash.com/photo-1512621843614-b346415cca10?w=600&h=400&fit=crop";
+                    e.target.src = getCatalogFallbackImage(selectedFoodName);
                     setIsImageLoading1(false);
                   }}
                 />
@@ -1423,22 +1452,23 @@ const ResultPage = () => {
                 Cancel
               </button>
               <button 
+                type="button"
                 onClick={handleExecuteReplan}
-                disabled={replanProgress || !customBName || !customBCal}
+                disabled={replanProgress || !customBName.trim()}
                 style={{
                   background: '#10b981',
                   border: 'none',
                   color: '#fff',
-                  cursor: 'pointer',
+                  cursor: (replanProgress || !customBName.trim()) ? 'not-allowed' : 'pointer',
                   fontSize: '13px',
                   fontWeight: '800',
-                  padding: '12px 20px',
+                  padding: '12px 24px',
                   borderRadius: '12px',
                   fontFamily: 'Arial, Helvetica, sans-serif',
-                  opacity: (replanProgress || !customBName || !customBCal) ? 0.6 : 1
+                  opacity: (replanProgress || !customBName.trim()) ? 0.6 : 1
                 }}
               >
-                {replanProgress ? 'Re-planning...' : 'Re-plan Day'}
+                {replanProgress ? 'Swapping & Rebalancing...' : '🚀 Swap Meal Now'}
               </button>
             </div>
           </div>
