@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_BASE_URL from '../apiConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faSpinner, faUndo, faArrowRight, faArrowLeft, 
-  faCheck, faHeartbeat, faExclamationTriangle 
+import {
+  faSpinner, faUndo, faArrowRight, faArrowLeft,
+  faCheck, faHeartbeat, faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 
 const InputSection = () => {
@@ -18,7 +18,7 @@ const InputSection = () => {
     gender: 'male', age: '', weight: '', height: '',
     goal: 'maintenance', diet_preference: 'vegetarian',
     exercises: 'moderate', medical_condition: ['None'], exclusions: [],
-    symptoms: [] 
+    symptoms: []
   };
   const [otherExclusion, setOtherExclusion] = useState("");
   const medicalOptions = ["None", "Diabetes", "PCOS", "Thyroid", "Hypertension", "Cholesterol"];
@@ -127,7 +127,7 @@ const InputSection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(step)) return;
-    
+
     setLoading(true);
     const userEmail = localStorage.getItem("currentUserEmail");
 
@@ -137,14 +137,14 @@ const InputSection = () => {
         age: parseInt(formData.age),
         weight: parseFloat(formData.weight),
         height: parseFloat(formData.height) / 100, // Convert cm to meters for backend BMR
-        symptoms: formData.symptoms.join(", "), 
+        symptoms: formData.symptoms.join(", "),
         medical_condition: (formData.medical_condition || []).join(", "),
-        exclusions: [...(formData.exclusions || []), ...(otherExclusion ? otherExclusion.split(",").map(e=>e.trim()).filter(e=>e) : [])],
-        email: userEmail || "guest@example.com" 
+        exclusions: [...(formData.exclusions || []), ...(otherExclusion ? otherExclusion.split(",").map(e => e.trim()).filter(e => e) : [])],
+        email: userEmail || "guest@example.com"
       };
 
       const res = await axios.post(`${API_BASE_URL}/api/nutrition`, payload);
-      
+
       // Store generated plan as active
       localStorage.setItem("activePlan", JSON.stringify({
         metrics: {
@@ -165,16 +165,16 @@ const InputSection = () => {
         user_details: res.data.user_details
       }));
 
-      navigate('/results', { 
-        state: { 
-          plan: res.data.weekly_plan, 
+      navigate('/results', {
+        state: {
+          plan: res.data.weekly_plan,
           ai_advice: res.data.ai_advice,
           deficiency_analysis: res.data.deficiency_analysis,
           target_cal: res.data.target_cal,
           bmr: res.data.bmr,
           tdee: res.data.tdee,
           user_details: res.data.user_details
-        } 
+        }
       });
     } catch (err) {
       console.error(err);
@@ -194,7 +194,7 @@ const InputSection = () => {
   return (
     <div className="min-h-screen w-full bg-theme-bg flex items-center justify-center p-6 font-sans">
       <div className="w-full max-w-2xl bg-theme-card border border-slate-200/60 rounded-3xl shadow-xl p-8 relative overflow-hidden">
-        
+
         {/* Header Icon */}
         <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
@@ -214,26 +214,24 @@ const InputSection = () => {
         {/* Wizard Step Progress Bar */}
         <div className="flex justify-between items-center mb-10 px-4 relative">
           <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-slate-100 -translate-y-1/2 z-0" />
-          
+
           {stepsDetails.map((s, idx) => {
             const isCompleted = step > s.num;
             const isActive = step === s.num;
             return (
               <div key={s.num} className="flex flex-col items-center z-10 relative">
-                <div 
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 ${
-                    isActive 
-                      ? 'bg-theme-accent border-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20' 
-                      : isCompleted 
-                        ? 'bg-theme-card border-slate-900 text-theme-accent' 
-                        : 'bg-theme-card border-slate-200 text-theme-muted'
-                  }`}
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 ${isActive
+                    ? 'bg-theme-accent border-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    : isCompleted
+                      ? 'bg-theme-card border-slate-900 text-theme-accent'
+                      : 'bg-theme-card border-slate-200 text-theme-muted'
+                    }`}
                 >
                   {isCompleted ? <FontAwesomeIcon icon={faCheck} /> : s.num}
                 </div>
-                <span className={`text-[10px] uppercase tracking-wider font-extrabold mt-2 ${
-                  isActive ? 'text-theme-primary' : 'text-theme-muted'
-                }`}>
+                <span className={`text-[10px] uppercase tracking-wider font-extrabold mt-2 ${isActive ? 'text-theme-primary' : 'text-theme-muted'
+                  }`}>
                   {s.title}
                 </span>
               </div>
@@ -250,7 +248,7 @@ const InputSection = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          
+
           {/* STEP 1: BASELINE */}
           {step === 1 && (
             <div className="space-y-5 animate-fadeIn">
@@ -262,11 +260,10 @@ const InputSection = () => {
                       key={g}
                       type="button"
                       onClick={() => setFormData({ ...formData, gender: g })}
-                      className={`py-4 rounded-2xl border text-sm font-extrabold capitalize cursor-pointer transition-all duration-200 ${
-                        formData.gender === g
-                          ? 'bg-theme-accent border-emerald-500 text-slate-950 shadow shadow-emerald-500/10'
-                          : 'bg-theme-card border-slate-200 hover:bg-theme-bg text-slate-600'
-                      }`}
+                      className={`py-4 rounded-2xl border text-sm font-extrabold capitalize cursor-pointer transition-all duration-200 ${formData.gender === g
+                        ? 'bg-theme-accent border-emerald-500 text-slate-950 shadow shadow-emerald-500/10'
+                        : 'bg-theme-card border-slate-200 hover:bg-theme-bg text-slate-600'
+                        }`}
                     >
                       {g}
                     </button>
@@ -276,7 +273,7 @@ const InputSection = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Your Age (Years)</label>
-                <input 
+                <input
                   type="number"
                   min="12"
                   max="100"
@@ -296,7 +293,7 @@ const InputSection = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Weight (kg)</label>
-                  <input 
+                  <input
                     type="number"
                     min="30"
                     max="250"
@@ -309,7 +306,7 @@ const InputSection = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Height (cm)</label>
-                  <input 
+                  <input
                     type="number"
                     min="100"
                     max="220"
@@ -346,7 +343,7 @@ const InputSection = () => {
             <div className="space-y-5 animate-fadeIn">
               <div className="flex flex-col gap-2">
                 <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Primary Goal</label>
-                <select 
+                <select
                   className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-4 text-sm font-bold text-slate-800 outline-none transition appearance-none cursor-pointer"
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
@@ -362,7 +359,7 @@ const InputSection = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Weekly Activity</label>
-                  <select 
+                  <select
                     className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-4 text-sm font-bold text-slate-800 outline-none transition appearance-none cursor-pointer"
                     value={formData.exercises}
                     onChange={(e) => setFormData({ ...formData, exercises: e.target.value })}
@@ -375,7 +372,7 @@ const InputSection = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider">Dietary Preference</label>
-                  <select 
+                  <select
                     className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-4 text-sm font-bold text-slate-800 outline-none transition appearance-none cursor-pointer"
                     value={formData.diet_preference}
                     onChange={(e) => setFormData({ ...formData, diet_preference: e.target.value })}
@@ -392,7 +389,7 @@ const InputSection = () => {
           {/* STEP 4: CLINICAL DATA */}
           {step === 4 && (
             <div className="space-y-5 animate-fadeIn">
-              
+
               <div>
                 <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider block mb-3">Symptoms / Deficiencies</label>
                 <div className="grid grid-cols-2 gap-2.5">
@@ -403,15 +400,13 @@ const InputSection = () => {
                         key={option}
                         type="button"
                         onClick={() => handleCheckboxChange(option)}
-                        className={`flex items-center gap-2 p-3.5 rounded-xl border text-xs font-extrabold cursor-pointer transition ${
-                          isChecked 
-                            ? 'bg-theme-primary-light border-emerald-300 text-slate-900' 
-                            : 'bg-theme-card border-slate-200 text-slate-600 hover:bg-theme-bg'
-                        }`}
+                        className={`flex items-center gap-2 p-3.5 rounded-xl border text-xs font-extrabold cursor-pointer transition ${isChecked
+                          ? 'bg-theme-primary-light border-emerald-300 text-slate-900'
+                          : 'bg-theme-card border-slate-200 text-slate-600 hover:bg-theme-bg'
+                          }`}
                       >
-                        <div className={`w-4 h-4 rounded flex items-center justify-center border ${
-                          isChecked ? 'bg-theme-accent border-emerald-500 text-slate-950' : 'border-slate-300 bg-theme-card'
-                        }`}>
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border ${isChecked ? 'bg-theme-accent border-emerald-500 text-slate-950' : 'border-slate-300 bg-theme-card'
+                          }`}>
                           {isChecked && <FontAwesomeIcon icon={faCheck} className="text-[8px]" />}
                         </div>
                         <span>{option}</span>
@@ -432,11 +427,10 @@ const InputSection = () => {
                           key={option}
                           type="button"
                           onClick={() => handleMedicalChange(option)}
-                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                            isChecked
-                              ? 'bg-theme-accent text-slate-950 shadow-md'
-                              : 'bg-theme-bg border border-slate-200 text-slate-600 hover:bg-slate-100'
-                          }`}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${isChecked
+                            ? 'bg-theme-accent text-slate-950 shadow-md'
+                            : 'bg-theme-bg border border-slate-200 text-slate-600 hover:bg-slate-100'
+                            }`}
                         >
                           {option}
                         </button>
@@ -444,7 +438,7 @@ const InputSection = () => {
                     })}
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="text-xs text-theme-muted font-extrabold uppercase tracking-wider block mb-2">Exclusions / Allergies</label>
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -455,18 +449,17 @@ const InputSection = () => {
                           key={option}
                           type="button"
                           onClick={() => handleExclusionChange(option)}
-                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                            isChecked
-                              ? 'bg-theme-primary-light text-white shadow-md'
-                              : 'bg-theme-bg border border-slate-200 text-slate-600 hover:bg-slate-100'
-                          }`}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${isChecked
+                            ? 'bg-theme-primary-light text-white shadow-md'
+                            : 'bg-theme-bg border border-slate-200 text-slate-600 hover:bg-slate-100'
+                            }`}
                         >
                           {option}
                         </button>
                       );
                     })}
                   </div>
-                  <input 
+                  <input
                     type="text"
                     placeholder="Other exclusions (comma separated)"
                     className="w-full bg-theme-bg border border-slate-200 focus:border-emerald-500 rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 outline-none transition"

@@ -595,7 +595,7 @@ const TrackerDashboard = () => {
   }
 
   return (
-    <div className="p-0 bg-theme-bg min-h-full relative overflow-hidden">
+    <div className="p-0 bg-theme-bg min-h-full relative">
       <div className="flex flex-col xl:flex-row gap-6 h-full">
 
         {/* Main Left Content */}
@@ -607,18 +607,18 @@ const TrackerDashboard = () => {
               <h1 className="text-2xl md:text-3xl font-extrabold text-theme-text max-w-sm mb-2 leading-snug">A Healthier You, <br />One Meal at a Time</h1>
               <p className="text-theme-text font-medium text-sm max-w-md mb-6 hidden sm:block">"Your body is a temple, but only if you treat it as one." Let's hit your macro targets today!</p>
               <div className="flex flex-wrap gap-3 relative z-20 mt-2 sm:mt-0">
-                <button onClick={() => navigate('/inputs')} className="bg-theme-primary hover:bg-theme-primary/90 text-white font-bold px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer">
+                <button onClick={() => navigate('/inputs')} className="bg-theme-primary hover:bg-theme-primary/90 text-white font-bold px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
                   <span>Open Diet Planner</span>
                   <FontAwesomeIcon icon={faArrowRight} />
                 </button>
-                <button onClick={generatePDF} className="bg-slate-50 text-slate-800 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm border border-slate-200 dark:border-slate-600 transition-all cursor-pointer">
+                <button onClick={generatePDF} className="bg-slate-50 text-slate-800 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm border border-slate-200 dark:border-slate-600 transition-colors cursor-pointer">
                   <FontAwesomeIcon icon={faFilePdf} />
                   <span className="hidden sm:inline">Export PDF Report</span>
                   <span className="sm:hidden">Export</span>
                 </button>
               </div>
             </div>
-            <img src="/hero_salad.jpg" alt="Healthy Salad" className="absolute right-[-10%] top-[-20%] h-[140%] w-[60%] object-cover object-left opacity-90 mix-blend-multiply" />
+            <img src="/hero_salad.jpg" alt="Healthy Salad" className="absolute right-[-10%] top-[-20%] h-[140%] w-[60%] object-cover object-left opacity-90 mix-blend-multiply pointer-events-none transform translate-z-0" />
           </section>
 
           {/* Reminder Alert Banner */}
@@ -670,7 +670,7 @@ const TrackerDashboard = () => {
                     cx="96"
                     cy="96"
                     r={ringRadius}
-                    className="stroke-emerald-500 fill-none transition-all duration-500 ease-out"
+                    className="stroke-emerald-500 fill-none transition-[stroke-dashoffset] duration-500 ease-out"
                     strokeWidth="14"
                     strokeDasharray={ringCircumference}
                     strokeDashoffset={strokeDashoffset}
@@ -729,13 +729,13 @@ const TrackerDashboard = () => {
                       <div key={meal} className="flex flex-col gap-2">
                         <button
                           onClick={() => isOpen && handleToggleMeal(meal)}
-                          className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 ${!isOpen
+                          className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-colors duration-150 ${!isOpen
                             ? isChecked
                               ? 'bg-theme-primary-light/20 border-theme-border/80 text-theme-border opacity-80 cursor-not-allowed'
                               : 'bg-slate-50 border-slate-300 text-slate-700 opacity-90 cursor-not-allowed'
                             : isChecked
-                              ? 'bg-theme-primary-light/50 border-theme-border/80 text-slate-800 cursor-pointer hover:shadow-sm'
-                              : 'bg-theme-bg/50 border-slate-200/60 hover:bg-slate-100/30 text-slate-600 cursor-pointer'
+                              ? 'bg-theme-primary-light/50 border-theme-border/80 text-slate-800 cursor-pointer hover:border-emerald-500/50'
+                              : 'bg-theme-bg/50 border-slate-200/60 hover:bg-slate-100/30 text-slate-600 cursor-pointer hover:border-slate-300'
                             }`}
                         >
                           <div className="flex items-center gap-3">
@@ -943,7 +943,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-slate-700 transition-all duration-500"
+                        className="h-full bg-slate-700 transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMacros.protein / macroTargets.protein) * 100, 100)}%` }}
                       />
                     </div>
@@ -959,7 +959,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-theme-accent transition-all duration-500"
+                        className="h-full bg-theme-accent transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMacros.carbs / macroTargets.carbs) * 100, 100)}%` }}
                       />
                     </div>
@@ -975,7 +975,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-slate-400 transition-all duration-500"
+                        className="h-full bg-slate-400 transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMacros.fats / macroTargets.fats) * 100, 100)}%` }}
                       />
                     </div>
@@ -995,7 +995,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-teal-500 transition-all duration-500"
+                        className="h-full bg-teal-500 transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMicros.fiber / microTargets.fiber) * 100, 100)}%` }}
                       />
                     </div>
@@ -1011,7 +1011,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-orange-400 transition-all duration-500"
+                        className="h-full bg-orange-400 transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMicros.vitaminC / microTargets.vitaminC) * 100, 100)}%` }}
                       />
                     </div>
@@ -1027,7 +1027,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-sky-500 transition-all duration-500"
+                        className="h-full bg-sky-500 transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMicros.calcium / microTargets.calcium) * 100, 100)}%` }}
                       />
                     </div>
@@ -1043,7 +1043,7 @@ const TrackerDashboard = () => {
                     </div>
                     <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-amber-600 transition-all duration-500"
+                        className="h-full bg-amber-600 transition-[width] duration-300"
                         style={{ width: `${Math.min((consumedMicros.iron / microTargets.iron) * 100, 100)}%` }}
                       />
                     </div>
@@ -1117,7 +1117,7 @@ const TrackerDashboard = () => {
         </div> {/* End Main Left Content */}
 
         {/* Right Sidebar */}
-        <aside className="w-full xl:w-72 shrink-0 space-y-6 flex flex-col xl:sticky xl:top-0 h-fit">
+        <aside className="w-full xl:w-72 shrink-0 space-y-6 flex flex-col xl:sticky xl:top-0 h-fit transform translate-z-0">
 
           {/* Hydration Tracker */}
           <div className="bg-theme-card rounded-3xl p-6 border border-slate-200/60 shadow-sm flex flex-col items-center">
@@ -1142,11 +1142,11 @@ const TrackerDashboard = () => {
             </div>
 
             {/* Visual Glasses */}
-            <div className="grid grid-cols-4 gap-4 mt-4 mb-2 mx-auto w-fit">
+            <div className="grid grid-cols-4 gap-4 mt-4 mb-2 mx-auto w-fit pointer-events-none select-none">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className={`relative w-7 h-9 rounded-b-[10px] border-x-2 border-b-2 overflow-hidden shadow-[inset_0_0_6px_rgba(0,0,0,0.05)] flex items-end transition-colors ${i < waterGlasses ? 'border-blue-300' : 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50'}`}>
                   {/* Water Fill */}
-                  <div className={`absolute bottom-0 w-full transition-all duration-500 ease-in-out ${i < waterGlasses ? 'h-full bg-gradient-to-t from-blue-600 via-blue-400 to-cyan-300' : 'h-0'}`}>
+                  <div className={`absolute bottom-0 w-full transition-[width] duration-300 ease-in-out ${i < waterGlasses ? 'h-full bg-gradient-to-t from-blue-600 via-blue-400 to-cyan-300' : 'h-0'}`}>
                     {/* Water Surface reflection */}
                     {i < waterGlasses && <div className="w-full h-1 bg-white/40 absolute top-0"></div>}
                   </div>

@@ -349,7 +349,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto rounded-2xl">
+        <div className="flex-1 overflow-y-auto pr-1">
           <Outlet />
         </div>
       </main>

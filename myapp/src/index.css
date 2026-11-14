@@ -45,8 +45,16 @@
 .dark .border-slate-100, .dark .border-slate-200 { border-color: var(--color-theme-border); }
 .dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.3); }
 
-*, html, body {
+html {
   scroll-behavior: smooth;
+}
+
+/* Hardware-accelerated smooth scrolling without jank */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
+  overscroll-behavior-y: contain;
+  transform: translateZ(0);
 }
 
 body {
