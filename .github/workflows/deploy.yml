@@ -30,9 +30,11 @@ jobs:
         working-directory: ./myapp
         run: npm run build
 
-      - name: Copy index.html to 404.html for SPA routing
+      - name: Add .nojekyll and 404.html for SPA routing
         working-directory: ./myapp
-        run: cp dist/index.html dist/404.html
+        run: |
+          touch dist/.nojekyll
+          cp dist/index.html dist/404.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
