@@ -7,6 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from google import genai 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -47,6 +48,7 @@ class User(db.Model):
     weight = db.Column(db.Float)
     activity_level = db.Column(db.String(50))
     goal = db.Column(db.String(50))
+    two_factor_enabled = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.String(50), default=lambda: datetime.now().strftime("%Y-%m-%d"))
     plans = db.relationship('WeeklyPlan', backref='owner', lazy=True)
 
@@ -62,6 +64,12 @@ class WeeklyPlan(db.Model):
 
 with app.app_context():
     db.create_all()
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(text("ALTER TABLE \"user\" ADD COLUMN IF NOT EXISTS two_factor_enabled BOOLEAN DEFAULT FALSE;"))
+            conn.commit()
+    except Exception as e:
+        print("Note on two_factor_enabled column migration:", e)
 
 # ---------------- LLM CONFIGURATION ----------------
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -687,23 +695,211 @@ def register():
 def login():
     try:
         data = request.get_json()
-        email = data.get("email")
+        email = (data.get("email") or "").strip().lower()
         password = data.get("password")
 
         if not email or not password:
             return jsonify({"success": False, "error": "Email and password are required"}), 400
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter(db.func.lower(User.email) == email).first()
         if not user or not check_password_hash(user.password_hash, password):
             return jsonify({"success": False, "error": "Invalid email or password"}), 400
+
+        if user.two_factor_enabled:
+            otp_code = str(random.randint(100000, 999999))
+            OTP_STORE[f"2fa_login_{email}"] = otp_code
+            subject = "Foodie AI - Your 2FA Login Code"
+            body = f"Hello {user.name or 'User'},\n\nYour Two-Factor Authentication login code is: {otp_code}\n\nThis code expires in 10 minutes. Do not share it with anyone.\n\nThanks,\nFoodie AI Security"
+            send_email_notification(email, subject, body)
+            return jsonify({
+                "success": True,
+                "two_factor_required": True,
+                "email": user.email,
+                "message": "Two-factor verification code sent to your email",
+                "preview_code": otp_code
+            })
 
         return jsonify({
             "success": True,
             "name": user.name or "User",
             "email": user.email,
-            "profile_pic": user.profile_pic
+            "profile_pic": user.profile_pic,
+            "two_factor_enabled": False
         })
     except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/2fa/verify-login", methods=["POST"])
+def verify_2fa_login():
+    try:
+        data = request.get_json()
+        email = (data.get("email") or "").strip().lower()
+        otp = str(data.get("otp") or "").strip()
+
+        if not email or not otp:
+            return jsonify({"success": False, "error": "Email and 2FA code are required"}), 400
+
+        stored = OTP_STORE.get(f"2fa_login_{email}")
+        if not stored or stored != otp:
+            return jsonify({"success": False, "error": "Invalid or expired 2FA code"}), 400
+
+        OTP_STORE.pop(f"2fa_login_{email}", None)
+        user = User.query.filter(db.func.lower(User.email) == email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        return jsonify({
+            "success": True,
+            "name": user.name or "User",
+            "email": user.email,
+            "profile_pic": user.profile_pic,
+            "two_factor_enabled": True
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/security-status", methods=["POST"])
+def security_status():
+    try:
+        data = request.get_json()
+        email = (data.get("email") or "").strip().lower()
+        if not email:
+            return jsonify({"success": False, "error": "Email is required"}), 400
+
+        user = User.query.filter(db.func.lower(User.email) == email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        return jsonify({
+            "success": True,
+            "two_factor_enabled": bool(user.two_factor_enabled),
+            "email": user.email,
+            "created_at": user.created_at
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/change-password", methods=["POST"])
+def change_password():
+    try:
+        data = request.get_json()
+        email = (data.get("email") or "").strip().lower()
+        current_password = data.get("current_password")
+        new_password = data.get("new_password")
+
+        if not email or not current_password or not new_password:
+            return jsonify({"success": False, "error": "All fields are required"}), 400
+
+        if len(new_password) < 6:
+            return jsonify({"success": False, "error": "New password must be at least 6 characters long"}), 400
+
+        user = User.query.filter(db.func.lower(User.email) == email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        if not check_password_hash(user.password_hash, current_password):
+            return jsonify({"success": False, "error": "Current password is incorrect"}), 400
+
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+
+        # Alert email
+        subject = "Foodie AI - Your Password Was Changed"
+        body = f"Hello {user.name or 'User'},\n\nYour account password was successfully updated.\n\nIf you did not perform this change, please reset your password immediately.\n\nThanks,\nFoodie AI Security Team"
+        send_email_notification(email, subject, body)
+
+        return jsonify({"success": True, "message": "Password updated successfully!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/2fa/send-otp", methods=["POST"])
+def send_2fa_otp():
+    try:
+        data = request.get_json()
+        email = (data.get("email") or "").strip().lower()
+        if not email:
+            return jsonify({"success": False, "error": "Email is required"}), 400
+
+        user = User.query.filter(db.func.lower(User.email) == email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        otp_code = str(random.randint(100000, 999999))
+        OTP_STORE[f"2fa_setup_{email}"] = otp_code
+
+        subject = "Foodie AI - Two-Factor Authentication Setup Code"
+        body = f"Hello {user.name or 'User'},\n\nYour 6-digit confirmation code to enable Two-Factor Authentication is: {otp_code}\n\nDo not share this code with anyone.\n\nThanks,\nFoodie AI Security"
+        send_email_notification(email, subject, body)
+
+        return jsonify({
+            "success": True,
+            "message": "Verification code sent to your email",
+            "preview_code": otp_code
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/2fa/toggle", methods=["POST"])
+def toggle_2fa():
+    try:
+        data = request.get_json()
+        email = (data.get("email") or "").strip().lower()
+        enable = data.get("enable")
+        otp = str(data.get("otp") or "").strip()
+        password = data.get("password")
+
+        user = User.query.filter(db.func.lower(User.email) == email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        if enable:
+            stored = OTP_STORE.get(f"2fa_setup_{email}")
+            if not stored or stored != otp:
+                return jsonify({"success": False, "error": "Invalid or expired verification code"}), 400
+            
+            OTP_STORE.pop(f"2fa_setup_{email}", None)
+            user.two_factor_enabled = True
+            db.session.commit()
+            return jsonify({"success": True, "two_factor_enabled": True, "message": "Two-Factor Authentication is now ENABLED for your account!"})
+        else:
+            if not password or not check_password_hash(user.password_hash, password):
+                return jsonify({"success": False, "error": "Incorrect password. Password required to disable 2FA."}), 400
+
+            user.two_factor_enabled = False
+            db.session.commit()
+            return jsonify({"success": True, "two_factor_enabled": False, "message": "Two-Factor Authentication has been DISABLED."})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/delete-account", methods=["POST"])
+def delete_account():
+    try:
+        data = request.get_json()
+        email = (data.get("email") or "").strip().lower()
+        password = data.get("password")
+
+        if not email or not password:
+            return jsonify({"success": False, "error": "Email and password are required"}), 400
+
+        user = User.query.filter(db.func.lower(User.email) == email).first()
+        if not user:
+            return jsonify({"success": False, "error": "User not found"}), 404
+
+        if not check_password_hash(user.password_hash, password):
+            return jsonify({"success": False, "error": "Incorrect password. Cannot delete account."}), 400
+
+        # Delete all weekly plans owned by user
+        WeeklyPlan.query.filter_by(user_id=user.id).delete()
+        
+        # Delete user
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "Your account and all associated data have been permanently deleted."})
+    except Exception as e:
+        db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route("/api/update-profile-pic", methods=["POST"])
