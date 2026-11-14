@@ -423,6 +423,7 @@ def api():
             "target_cal": final_daily,
             "bmr": final_bmr,
             "tdee": final_tdee,
+            "created_at": datetime.now().strftime("%Y-%m-%d"),
             "user_details": {
                 "age": user.age,
                 "weight": user.weight,
@@ -445,6 +446,7 @@ def api():
             "target_cal": final_daily,
             "bmr": final_bmr,
             "tdee": final_tdee,
+            "created_at": datetime.now().strftime("%Y-%m-%d"),
             "user_details": {
                 "age": user.age,
                 "weight": user.weight,

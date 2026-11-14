@@ -73,12 +73,37 @@ const TrackerDashboard = () => {
     localStorage.setItem(`water_${userEmail}_${today}`, newValue);
   };
 
+  const cleanFoodDisplay = (foodStr) => {
+    if (!foodStr) return "";
+    return foodStr
+      .split(/\s+\+\s+/)
+      .map(p => {
+        let name = p.split(' - ')[0] || p.split('(')[0] || p;
+        return name.replace(/[|\]\[)]/g, '').trim();
+      })
+      .filter(Boolean)
+      .join(' & ');
+  };
+
   const getTodayDayKey = () => {
-    const today = new Date();
-    // Monday is Day 1, Sunday is Day 7
-    const dayIndex = today.getDay();
-    const dayNum = dayIndex === 0 ? 7 : dayIndex;
-    return `Day ${dayNum}`;
+    try {
+      const activePlan = JSON.parse(localStorage.getItem("activePlan") || "{}");
+      const planDateStr = activePlan.created_at || activePlan.startDate;
+      if (planDateStr) {
+        const planDate = new Date(planDateStr);
+        planDate.setHours(0, 0, 0, 0);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffTime = today.getTime() - planDate.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays < 7) {
+          return `Day ${diffDays + 1}`;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return 'Day 1';
   };
 
   const getMealStatus = (mealKey) => {
@@ -775,8 +800,8 @@ const TrackerDashboard = () => {
                                 )}
                               </div>
                               {plannedFood && (
-                                <span className="text-[11px] text-theme-muted font-semibold mt-0.5 max-w-[170px] truncate" title={plannedFood}>
-                                  {plannedFood}
+                                <span className="text-[11px] text-theme-muted font-semibold mt-0.5 max-w-[170px] truncate" title={cleanFoodDisplay(plannedFood)}>
+                                  {cleanFoodDisplay(plannedFood)}
                                 </span>
                               )}
                             </div>

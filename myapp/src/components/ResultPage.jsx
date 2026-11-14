@@ -17,7 +17,10 @@ const ResultPage = () => {
 
   const getInitialData = () => {
     if (location.state && location.state.plan && Object.keys(location.state.plan).length > 0) {
-      return location.state;
+      return {
+        ...location.state,
+        created_at: location.state.created_at || new Date().toISOString()
+      };
     }
     const cached = localStorage.getItem("activePlan");
     if (cached) {
@@ -30,7 +33,8 @@ const ResultPage = () => {
           target_cal: parsed.target_cal || (parsed.metrics?.target_cal) || 0,
           bmr: parsed.bmr || (parsed.metrics?.bmr) || 0,
           tdee: parsed.tdee || (parsed.metrics?.tdee) || 0,
-          user_details: parsed.user_details || parsed.metrics || {}
+          user_details: parsed.user_details || parsed.metrics || {},
+          created_at: parsed.created_at || parsed.startDate || new Date().toISOString()
         };
       } catch (err) {
         console.error("Failed to parse cached activePlan:", err);
@@ -38,7 +42,7 @@ const ResultPage = () => {
     }
     return { 
       plan: {}, ai_advice: "", deficiency_analysis: "", target_cal: 0, 
-      bmr: 0, tdee: 0, user_details: {} 
+      bmr: 0, tdee: 0, user_details: {}, created_at: new Date().toISOString()
     };
   };
 
@@ -53,6 +57,7 @@ const ResultPage = () => {
     tdee: initialData.tdee
   });
   const [currentUserDetails, setCurrentUserDetails] = useState(initialData.user_details || {});
+  const [planCreatedAt, setPlanCreatedAt] = useState(initialData.created_at || new Date().toISOString());
 
   const userEmail = localStorage.getItem("currentUserEmail") || "guest@example.com";
   const [eatenWeekly, setEatenWeekly] = useState({});
@@ -119,6 +124,8 @@ const ResultPage = () => {
             if (!tdeeVal || tdeeVal === 0) tdeeVal = info.tdee || 0;
           }
           
+          const planCreated = latestPlan.created_at || parsedObj.created_at || planCreatedAt;
+          setPlanCreatedAt(planCreated);
           setCurrentPlan(plan);
           setCurrentAdvice(advice);
           setCurrentDeficiency(deficiency);
@@ -145,7 +152,8 @@ const ResultPage = () => {
             weekly_plan: plan,
             ai_advice: advice,
             deficiency_analysis: deficiency,
-            user_details: details
+            user_details: details,
+            created_at: planCreated
           }));
         }
       } catch (err) {
@@ -311,6 +319,93 @@ const ResultPage = () => {
   const sortedDays = Object.keys(currentPlan).sort((a, b) => 
     a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
   );
+
+  const getDayDetails = (dayKey) => {
+    const match = dayKey.match(/Day\s*(\d+)/i);
+    if (!match) return { dayNumber: dayKey, weekday: "", formattedDate: "", isToday: false };
+    const dayNum = parseInt(match[1], 10);
+    const dayOffset = dayNum - 1;
+
+    let baseDate = planCreatedAt ? new Date(planCreatedAt) : new Date();
+    if (isNaN(baseDate.getTime())) baseDate = new Date();
+
+    const targetDate = new Date(baseDate);
+    targetDate.setDate(baseDate.getDate() + dayOffset);
+
+    const today = new Date();
+    const isToday = (
+      targetDate.getFullYear() === today.getFullYear() &&
+      targetDate.getMonth() === today.getMonth() &&
+      targetDate.getDate() === today.getDate()
+    );
+
+    const weekday = targetDate.toLocaleDateString('en-US', { weekday: 'long' });
+    const formattedDate = targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    return {
+      dayNumber: `Day ${dayNum}`,
+      weekday,
+      formattedDate,
+      isToday
+    };
+  };
+
+  const parseMealItems = (mealString) => {
+    if (!mealString || typeof mealString !== 'string') return [];
+    
+    // Split combined dishes separated by " + "
+    const rawItems = mealString.split(/\s+\+\s+/);
+
+    return rawItems.map((raw, idx) => {
+      const trimmed = raw.trim();
+      if (!trimmed) return null;
+
+      let name = trimmed;
+      let portion = "";
+      let calories = "";
+      let macros = null;
+
+      // Extract macros: | P:39 C:78 F:12 Fi:20 V:0 Ca:0 Fe:0.0
+      const macroMatch = trimmed.match(/\|\s*P:(\d+)\s+C:(\d+)\s+F:(\d+)(?:\s+Fi:(\d+))?(?:\s+V:(\d+))?(?:\s+Ca:(\d+))?(?:\s+Fe:([\d\.]+))?/i);
+      if (macroMatch) {
+        macros = {
+          p: parseInt(macroMatch[1], 10),
+          c: parseInt(macroMatch[2], 10),
+          f: parseInt(macroMatch[3], 10),
+          fi: macroMatch[4] ? parseInt(macroMatch[4], 10) : 0
+        };
+      }
+
+      // Extract calories
+      const calMatch = trimmed.match(/(\d+)\s*kcal/i);
+      if (calMatch) {
+        calories = `${calMatch[1]} kcal`;
+      }
+
+      // Extract portion (e.g. "390g", "85g", "2 pieces", "200ml")
+      const portionMatch = trimmed.match(/-\s*(\d+\s*(?:g|ml|pcs|pieces|cups?|bowl))/i);
+      if (portionMatch) {
+        portion = portionMatch[1].trim();
+      }
+
+      // Extract clean dish name before " - " or before "("
+      if (trimmed.includes(' - ')) {
+        name = trimmed.split(' - ')[0].trim();
+      } else if (trimmed.includes('(')) {
+        name = trimmed.split('(')[0].trim();
+      }
+      name = name.replace(/[|\]\[)]/g, '').trim();
+
+      return {
+        id: `${name}-${idx}`,
+        raw: trimmed,
+        name: name || trimmed,
+        portion,
+        calories,
+        macros
+      };
+    }).filter(Boolean);
+  };
 
   const parseMeals = (dayData) => {
     if (!dayData) return { Breakfast: "", Lunch: "", Snack: "", Dinner: "", Calories: "" };
@@ -511,8 +606,17 @@ const ResultPage = () => {
 
       const tableData = sortedDays.map(day => {
         const m = parseMeals(currentPlan[day]);
-        const cleanItem = (item) => item.split('(')[0].trim();
-        return [ day, cleanItem(m.Breakfast), cleanItem(m.Lunch), cleanItem(m.Snack), cleanItem(m.Dinner), m.Calories ];
+        const dayInfo = getDayDetails(day);
+        const cleanFood = (str) => {
+          if (!str) return "—";
+          const items = parseMealItems(str);
+          if (items.length > 0) {
+            return items.map(it => `${it.name}${it.portion ? ` (${it.portion})` : ''}`).join(' + ');
+          }
+          return str.split('(')[0].trim();
+        };
+        const dayCol = `${dayInfo.dayNumber}\n(${dayInfo.weekday})`;
+        return [ dayCol, cleanFood(m.Breakfast), cleanFood(m.Lunch), cleanFood(m.Snack), cleanFood(m.Dinner), m.Calories ];
       });
 
       autoTable(doc, {
@@ -814,22 +918,47 @@ const ResultPage = () => {
       <div style={styles.grid}>
         {sortedDays.map((day) => {
           const meals = parseMeals(currentPlan[day]);
+          const dayInfo = getDayDetails(day);
           const highlightDay = location.state?.highlightDay || "";
-          const isTodayHighlight = (highlightDay && day === highlightDay) || (!highlightDay && day === `Day ${new Date().getDay() === 0 ? 7 : new Date().getDay()}`);
+          const isTodayHighlight = (highlightDay && day === highlightDay) || (!highlightDay && dayInfo.isToday);
           return (
             <div key={day} style={{
               ...styles.dayCard,
               border: isTodayHighlight ? '2px solid #10b981' : '1px solid #e2e8f0',
-              boxShadow: isTodayHighlight ? '0 10px 25px rgba(16, 185, 129, 0.15)' : 'none',
+              boxShadow: isTodayHighlight ? '0 12px 30px rgba(16, 185, 129, 0.18)' : '0 4px 15px rgba(0,0,0,0.03)',
               transform: isTodayHighlight ? 'scale(1.02)' : 'none',
               transition: 'all 0.3s ease'
             }}>
               <div style={styles.cardHeader}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <h3 style={styles.dayLabel}>{day}</h3>
-                  {isTodayHighlight && (
-                    <span style={{ background: '#10b981', color: '#fff', fontSize: '9px', fontWeight: '850', padding: '2px 6px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Today
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <h3 style={styles.dayLabel}>{dayInfo.dayNumber}</h3>
+                  <span style={{
+                    background: dayInfo.isToday ? '#10b981' : '#f1f5f9',
+                    color: dayInfo.isToday ? '#ffffff' : '#334155',
+                    fontSize: '11px',
+                    fontWeight: '800',
+                    padding: '3px 8px',
+                    borderRadius: '8px',
+                    letterSpacing: '0.3px'
+                  }}>
+                    {dayInfo.weekday}
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600' }}>
+                    {dayInfo.formattedDate}
+                  </span>
+                  {dayInfo.isToday && (
+                    <span style={{
+                      background: '#ecfdf5',
+                      color: '#059669',
+                      border: '1px solid #10b981',
+                      fontSize: '9px',
+                      fontWeight: '900',
+                      padding: '2px 7px',
+                      borderRadius: '12px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      TODAY
                     </span>
                   )}
                 </div>
@@ -841,15 +970,25 @@ const ResultPage = () => {
                 {['Breakfast', 'Lunch', 'Snack', 'Dinner'].map(type => {
                   const key = `${day}_${type}`;
                   const isChecked = eatenWeekly[key];
+                  const items = parseMealItems(meals[type]);
+                  const mealTotalCal = items.reduce((acc, item) => {
+                    const val = parseInt(item.calories) || 0;
+                    return acc + val;
+                  }, 0);
+
                   return (
                     <div key={type} className="meal-box-card" style={{
                       ...styles.mealBox,
                       borderLeft: isChecked ? '4px solid #10b981' : '1px solid #e2e8f0',
-                      background: isChecked ? '#f8fafc' : '#fff',
+                      background: isChecked ? '#f8fafc' : '#ffffff',
+                      borderRadius: '14px',
+                      padding: '12px 14px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
                       opacity: isChecked ? 0.75 : 1,
                       transition: 'all 0.2s ease'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      {/* Meal Category Bar */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <button
                             type="button"
@@ -869,49 +1008,180 @@ const ResultPage = () => {
                             <span style={{ fontSize: '18px', lineHeight: '1' }}>{isChecked ? '✅' : '⚪'}</span>
                           </button>
                           <span style={{
-                            ...styles.mealLabel,
-                            textDecoration: isChecked ? 'line-through' : 'none',
-                            color: isChecked ? '#64748b' : '#334155'
-                          }}>{type}</span>
+                            fontSize: '11px',
+                            fontWeight: '800',
+                            letterSpacing: '0.8px',
+                            textTransform: 'uppercase',
+                            color: isChecked ? '#64748b' : '#059669',
+                            textDecoration: isChecked ? 'line-through' : 'none'
+                          }}>
+                            {type}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {mealTotalCal > 0 && (
+                            <span style={{
+                              background: '#fef2f2',
+                              color: '#dc2626',
+                              fontSize: '10px',
+                              fontWeight: '700',
+                              padding: '2px 7px',
+                              borderRadius: '6px'
+                            }}>
+                              {mealTotalCal} kcal
+                            </span>
+                          )}
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              setReplanMealType(type.toLowerCase());
+                              setReplanDay(day);
+                              setCustomBName("");
+                              setCustomBCal("");
+                              setIsReplanModalOpen(true);
+                            }}
+                            style={{
+                              background: '#fffbeb',
+                              border: '1px solid #fde68a',
+                              color: '#b45309',
+                              cursor: 'pointer',
+                              fontSize: '10px',
+                              fontWeight: '700',
+                              padding: '2px 7px',
+                              borderRadius: '6px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px'
+                            }}
+                            title={`Ate a different ${type.toLowerCase()}? Swap/Re-plan.`}
+                          >
+                            🍽️ Swap
+                          </button>
                         </div>
                       </div>
-                      <span style={{ 
-                        fontSize: '14px', 
-                        color: isChecked ? '#64748b' : '#1e293b', 
-                        fontWeight: '750',
-                        textDecoration: isChecked ? 'line-through' : 'none',
-                        marginBottom: '8px'
-                      }}>
-                        {meals[type]}
-                      </span>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
-                        <button 
-                          onClick={() => {
-                            setReplanMealType(type.toLowerCase());
-                            setReplanDay(day);
-                            setCustomBName("");
-                            setCustomBCal("");
-                            setIsReplanModalOpen(true);
-                          }}
-                          style={{ background: '#fef3c7', border: 'none', color: '#d97706', cursor: 'pointer', fontSize: '10px', fontWeight: '850', padding: '4px 8px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                          title={`Ate a different ${type.toLowerCase()}? Re-plan remaining meals.`}
-                        >
-                          🍽️ Alternative
-                        </button>
-                        <button 
-                          onClick={() => openImageModal(meals[type], type)}
-                          style={{ background: '#f1f5f9', border: 'none', color: '#475569', cursor: 'pointer', fontSize: '10px', fontWeight: '800', padding: '4px 8px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                          title="View Food Photo"
-                        >
-                          <FontAwesomeIcon icon={faCamera} /> Photo
-                        </button>
-                        <button 
-                          onClick={() => openRecipeModal(meals[type])}
-                          style={{ background: '#ecfdf5', border: 'none', color: '#059669', cursor: 'pointer', fontSize: '10px', fontWeight: '800', padding: '4px 8px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                          title="View AI Recipe"
-                        >
-                          🍳 Recipe
-                        </button>
+
+                      {/* Food Items List */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {items.length === 0 ? (
+                          <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>
+                            {meals[type] || "No meal scheduled"}
+                          </span>
+                        ) : (
+                          items.map((item, idx) => (
+                            <div key={idx} style={{
+                              background: isChecked ? '#f1f5f9' : '#f8fafc',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '10px',
+                              padding: '9px 11px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '5px'
+                            }}>
+                              {/* Dish Title & Portion */}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                                <span style={{
+                                  fontSize: '13px',
+                                  fontWeight: '700',
+                                  color: isChecked ? '#64748b' : '#0f172a',
+                                  textDecoration: isChecked ? 'line-through' : 'none',
+                                  lineHeight: '1.3'
+                                }}>
+                                  {item.name}
+                                </span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+                                  {item.portion && (
+                                    <span style={{
+                                      background: '#e2e8f0',
+                                      color: '#475569',
+                                      fontSize: '10px',
+                                      fontWeight: '700',
+                                      padding: '2px 6px',
+                                      borderRadius: '5px'
+                                    }}>
+                                      {item.portion}
+                                    </span>
+                                  )}
+                                  {item.calories && (
+                                    <span style={{
+                                      background: '#fee2e2',
+                                      color: '#b91c1c',
+                                      fontSize: '10px',
+                                      fontWeight: '700',
+                                      padding: '2px 6px',
+                                      borderRadius: '5px'
+                                    }}>
+                                      {item.calories}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Nutrients / Macros */}
+                              {item.macros && (
+                                <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginTop: '2px' }}>
+                                  <span style={{ background: '#dbeafe', color: '#1e40af', fontSize: '9.5px', fontWeight: '700', padding: '1px 6px', borderRadius: '4px' }}>
+                                    P: {item.macros.p}g
+                                  </span>
+                                  <span style={{ background: '#fef3c7', color: '#92400e', fontSize: '9.5px', fontWeight: '700', padding: '1px 6px', borderRadius: '4px' }}>
+                                    C: {item.macros.c}g
+                                  </span>
+                                  <span style={{ background: '#fae8ff', color: '#86198f', fontSize: '9.5px', fontWeight: '700', padding: '1px 6px', borderRadius: '4px' }}>
+                                    F: {item.macros.f}g
+                                  </span>
+                                  {item.macros.fi > 0 && (
+                                    <span style={{ background: '#dcfce7', color: '#166534', fontSize: '9.5px', fontWeight: '700', padding: '1px 6px', borderRadius: '4px' }}>
+                                      Fi: {item.macros.fi}g
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Action Buttons: Photo & Recipe */}
+                              <div style={{ display: 'flex', gap: '6px', marginTop: '3px' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => openImageModal(item.name, type)}
+                                  style={{
+                                    background: '#ffffff',
+                                    border: '1px solid #cbd5e1',
+                                    color: '#475569',
+                                    cursor: 'pointer',
+                                    fontSize: '9.5px',
+                                    fontWeight: '700',
+                                    padding: '3px 7px',
+                                    borderRadius: '5px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px'
+                                  }}
+                                  title={`View photo of ${item.name}`}
+                                >
+                                  <FontAwesomeIcon icon={faCamera} /> Photo
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openRecipeModal(item.name)}
+                                  style={{
+                                    background: '#ecfdf5',
+                                    border: '1px solid #a7f3d0',
+                                    color: '#065f46',
+                                    cursor: 'pointer',
+                                    fontSize: '9.5px',
+                                    fontWeight: '700',
+                                    padding: '3px 7px',
+                                    borderRadius: '5px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px'
+                                  }}
+                                  title={`View AI Recipe for ${item.name}`}
+                                >
+                                  🍳 Recipe
+                                </button>
+                              </div>
+                            </div>
+                          ))
+                        )}
                       </div>
                     </div>
                   );

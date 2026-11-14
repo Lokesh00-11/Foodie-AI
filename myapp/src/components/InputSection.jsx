@@ -144,6 +144,7 @@ const InputSection = () => {
       };
 
       const res = await axios.post(`${API_BASE_URL}/api/nutrition`, payload);
+      const planCreationDate = res.data.created_at || new Date().toISOString();
 
       // Store generated plan as active
       localStorage.setItem("activePlan", JSON.stringify({
@@ -162,7 +163,9 @@ const InputSection = () => {
         weekly_plan: res.data.weekly_plan,
         ai_advice: res.data.ai_advice,
         deficiency_analysis: res.data.deficiency_analysis,
-        user_details: res.data.user_details
+        user_details: res.data.user_details,
+        created_at: planCreationDate,
+        startDate: planCreationDate
       }));
 
       navigate('/results', {
@@ -173,7 +176,8 @@ const InputSection = () => {
           target_cal: res.data.target_cal,
           bmr: res.data.bmr,
           tdee: res.data.tdee,
-          user_details: res.data.user_details
+          user_details: res.data.user_details,
+          created_at: planCreationDate
         }
       });
     } catch (err) {
