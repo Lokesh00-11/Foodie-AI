@@ -65,7 +65,7 @@ with app.app_context():
 
 # ---------------- LLM CONFIGURATION ----------------
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
 def extract_json(text):
     text = text.strip()
@@ -319,7 +319,6 @@ def generate_weekly_plan(daily_cal, exclusions, diet_pref):
                 
         if not (best_day_valid and (0.95 * daily_cal <= best_total <= 1.05 * daily_cal)):
             raise ValueError(f"Could not generate a valid plan for {day_key} within +/- 5% daily target ({daily_cal} kcal) and per-meal bounds. Best total: {best_total}, valid: {best_day_valid}")
-            raise ValueError(f"Could not generate a valid plan for {day_key} within +/- 2% daily target ({daily_cal} kcal) and per-meal bounds. Best total: {best_total}, valid: {best_day_valid}")
 
                 
         for f in best_day_foods:
@@ -771,6 +770,193 @@ def chat():
         reply = f"*(AI Advisor Offline)*\n\n{random.choice(fallback_replies)}\n\n*Feel free to ask another question!*"
         return jsonify({"success": True, "reply": reply})
 
+DISH_RECIPE_KNOWLEDGE = {
+    "chilla": {
+        "prep_time": "15 mins",
+        "ingredients": [
+            "1 cup Yellow Moong Dal (soaked & blended to smooth batter)",
+            "1 finely chopped Green Chilli & 1/2 inch grated Ginger",
+            "1/4 cup finely chopped Onions & fresh Coriander leaves",
+            "1/4 tsp Turmeric powder & 1/2 tsp Cumin seeds",
+            "Pinch of Hing (Asafoetida) & Salt to taste",
+            "1-2 tsp Ghee or Oil for cooking"
+        ],
+        "instructions": [
+            "Soak yellow moong dal for 2 hours, then grind with ginger and green chillies into a smooth, pourable batter.",
+            "Mix in chopped onions, fresh coriander, cumin seeds, turmeric, hing, and salt.",
+            "Heat a tawa or non-stick griddle over medium flame and brush lightly with ghee/oil.",
+            "Pour a ladleful of batter in the center and spread evenly in circular motion into a thin chilla.",
+            "Drizzle a few drops of ghee around the edges; cook until golden and crisp, then flip and cook the other side for 1-2 minutes.",
+            "Fold and serve hot with fresh mint-coriander chutney or homemade curd."
+        ],
+        "macros": {"protein": 14, "carbs": 38, "fats": 7, "calories": 270}
+    },
+    "dosa": {
+        "prep_time": "20 mins",
+        "ingredients": [
+            "2 cups Fermented Dosa Batter (rice and urad dal)",
+            "1-2 tsp Sesame oil or Ghee",
+            "Salt to taste",
+            "Optional spiced potato filling (boiled potatoes, mustard, onions, turmeric)"
+        ],
+        "instructions": [
+            "Heat a flat griddle or tawa until hot; sprinkle a few drops of water and wipe clean.",
+            "Pour a ladle of fermented dosa batter in the center and spread outward in concentric circles.",
+            "Drizzle ghee around the edges and cook until the underside is crispy golden brown.",
+            "Optional: place spiced potato masala in the center.",
+            "Roll or fold the dosa and serve immediately with hot sambar and coconut chutney."
+        ],
+        "macros": {"protein": 8, "carbs": 52, "fats": 8, "calories": 310}
+    },
+    "paratha": {
+        "prep_time": "25 mins",
+        "ingredients": [
+            "1.5 cups Whole Wheat Flour (Atta) kneaded into soft dough",
+            "Filling: Grated spiced paneer, mashed potatoes, or cauliflower with ajwain & garam masala",
+            "1 tbsp Ghee for roasting",
+            "Fresh coriander and finely chopped green chillies"
+        ],
+        "instructions": [
+            "Roll out a small dough ball into a 4-inch disc, place the spiced stuffing in the center, and seal tightly.",
+            "Dust with dry flour and roll out gently into an even 7-inch flatbread.",
+            "Cook on a hot tawa for 1 minute until small bubbles appear.",
+            "Flip, brush lightly with ghee, and press gently with a spatula until golden spots appear on both sides.",
+            "Serve piping hot with fresh curd (yogurt) and pickle."
+        ],
+        "macros": {"protein": 12, "carbs": 58, "fats": 14, "calories": 405}
+    },
+    "poha": {
+        "prep_time": "15 mins",
+        "ingredients": [
+            "1.5 cups Thick Flattened Rice (Poha), rinsed & drained",
+            "1 medium Onion & 1 Green Chilli finely chopped",
+            "2 tbsp Raw Peanuts & 1/2 tsp Mustard seeds",
+            "1/4 tsp Turmeric powder & a sprig of Curry leaves",
+            "1 tbsp Oil, Salt to taste, and juice of 1/2 fresh Lemon"
+        ],
+        "instructions": [
+            "Gently rinse poha in a colander until softened, drain completely, and toss with salt and turmeric.",
+            "Heat oil in a pan, roast peanuts until crunchy, then add mustard seeds and curry leaves until they crackle.",
+            "Add chopped onions and green chillies; sauté on medium heat until translucent.",
+            "Add the softened poha, gently fold together, cover with a lid and steam on low flame for 2 minutes.",
+            "Turn off heat, drizzle fresh lemon juice, garnish with coriander, and serve warm."
+        ],
+        "macros": {"protein": 6, "carbs": 48, "fats": 8, "calories": 290}
+    },
+    "chicken": {
+        "prep_time": "30 mins",
+        "ingredients": [
+            "250g Skinless Chicken Breast or curry cut pieces",
+            "1 large Onion & 2 Tomatoes pureed, 1 tbsp Ginger-Garlic paste",
+            "Spices: 1/2 tsp turmeric, 1 tsp coriander, 1/2 tsp red chilli, 1/2 tsp garam masala",
+            "1 tbsp Mustard/Olive oil, Cumin seeds, Salt to taste",
+            "Fresh coriander leaves for garnish"
+        ],
+        "instructions": [
+            "Heat 1 tbsp oil in a pot, add cumin seeds, and sauté finely chopped onions until golden brown.",
+            "Stir in ginger-garlic paste and cook for 1 minute until the raw aroma disappears.",
+            "Add tomato puree, turmeric, coriander, chilli powder, and salt. Cook until oil separates.",
+            "Add chicken pieces and sear in the aromatic masala on high heat for 3-4 minutes.",
+            "Add 1/2 cup warm water, cover with lid, and simmer on low heat for 15 minutes until chicken is tender.",
+            "Sprinkle garam masala and fresh coriander; serve hot with steamed brown rice or whole wheat roti."
+        ],
+        "macros": {"protein": 38, "carbs": 12, "fats": 10, "calories": 290}
+    },
+    "fish": {
+        "prep_time": "20 mins",
+        "ingredients": [
+            "200g Fresh Fish Fillets",
+            "1 Onion & 1 Tomato chopped, 1 tsp Ginger-Garlic paste",
+            "Spices: turmeric, cumin powder, mustard seeds, curry leaves",
+            "1 tbsp Coconut oil or Mustard oil, Salt to taste",
+            "Fresh lemon juice and coriander"
+        ],
+        "instructions": [
+            "Marinate fish fillets with a pinch of turmeric, salt, and lemon juice for 10 minutes.",
+            "Heat 1 tbsp oil in a pan, splutter mustard seeds and fresh curry leaves.",
+            "Add sliced onions, ginger-garlic paste, and tomatoes; sauté until soft.",
+            "Gently slide in marinated fish pieces and cook for 2 minutes on each side.",
+            "Add 1/3 cup warm water, cover and simmer gently for 6 minutes until fish flakes easily.",
+            "Garnish with slit green chillies and serve with warm steamed rice."
+        ],
+        "macros": {"protein": 32, "carbs": 8, "fats": 9, "calories": 240}
+    },
+    "mutton": {
+        "prep_time": "40 mins",
+        "ingredients": [
+            "250g Lean Mutton pieces",
+            "Whole spices (bay leaf, cloves, cardamom, cinnamon stick)",
+            "2 Onions sliced, 1 tbsp Ginger-Garlic paste, 2 Tomatoes pureed",
+            "Spices: 1 tsp Kashmiri chilli, 1 tsp coriander, 1/2 tsp cumin, 1/2 tsp garam masala",
+            "1.5 tbsp Ghee or Mustard oil, Salt to taste"
+        ],
+        "instructions": [
+            "Heat oil/ghee in a pressure cooker; add whole spices until fragrant.",
+            "Add sliced onions and sauté on medium flame until rich golden brown.",
+            "Add ginger-garlic paste, tomato puree, ground spices, and salt; cook until oil glazes the edges.",
+            "Add mutton pieces and sear vigorously for 6 minutes until browned.",
+            "Add 1.5 cups hot water, seal the cooker, and pressure cook for 5-6 whistles until meat is tender.",
+            "Simmer to desired consistency, garnish with coriander, and serve hot."
+        ],
+        "macros": {"protein": 36, "carbs": 10, "fats": 16, "calories": 330}
+    },
+    "paneer": {
+        "prep_time": "25 mins",
+        "ingredients": [
+            "200g Fresh Paneer cubes",
+            "2 medium Tomatoes pureed, 1 Onion finely chopped, 1 tbsp Ginger-Garlic paste",
+            "Spices: turmeric, coriander powder, cumin, kasuri methi, garam masala",
+            "1 tbsp Ghee or Oil, Salt to taste",
+            "2 tbsp fresh cream or whisked curd"
+        ],
+        "instructions": [
+            "Lightly pan-sear paneer cubes in 1 tsp ghee for 2 minutes until light golden.",
+            "Heat remaining ghee in a pan, add cumin seeds, chopped onions, and sauté until translucent.",
+            "Add ginger-garlic paste, tomato puree and ground spices; cook until oil begins to separate.",
+            "Stir in whisked curd/cream and 1/2 cup warm water to create a rich gravy; bring to a gentle simmer.",
+            "Add paneer cubes, crush kasuri methi into the gravy, and simmer on low for 3 minutes.",
+            "Serve warm with whole wheat roti or jeera rice."
+        ],
+        "macros": {"protein": 24, "carbs": 14, "fats": 22, "calories": 350}
+    },
+    "dal": {
+        "prep_time": "25 mins",
+        "ingredients": [
+            "3/4 cup Toor Dal or Yellow Moong Dal, rinsed",
+            "1 Tomato chopped, 1 Onion sliced, 2 Green Chillies",
+            "Tempering (Tadka): 1 tbsp Ghee, 1 tsp Cumin seeds, 1/2 tsp Mustard seeds, Pinch of Hing",
+            "1/2 tsp Turmeric powder, Salt to taste, Fresh coriander"
+        ],
+        "instructions": [
+            "Pressure cook dal with 2.5 cups water, turmeric, chopped tomato, and salt for 3 whistles until soft.",
+            "Whisk the cooked dal lightly with a spoon to achieve a smooth consistency.",
+            "In a tadka pan, heat 1 tbsp ghee, add cumin, mustard seeds, and hing until fragrant.",
+            "Add chopped onions and green chillies to the tadka; fry until golden brown.",
+            "Pour the sizzling tadka immediately into the simmering dal, cover with a lid for 2 minutes.",
+            "Garnish with fresh coriander leaves and serve with hot steamed rice."
+        ],
+        "macros": {"protein": 16, "carbs": 46, "fats": 8, "calories": 320}
+    },
+    "sprouts": {
+        "prep_time": "10 mins",
+        "ingredients": [
+            "1.5 cups Boiled or Steamed Moong Sprouts",
+            "1/2 Cucumber diced, 1 small Tomato diced, 1/4 cup finely chopped Onion",
+            "1 Green Chilli finely chopped, 2 tbsp Pomegranate pearls",
+            "1/2 tsp Chaat Masala, 1/4 tsp Roasted Cumin powder, Salt to taste",
+            "Juice of 1 fresh Lemon, Fresh coriander leaves"
+        ],
+        "instructions": [
+            "Steam moong sprouts for 3 minutes (or use raw sprouted moong) and let cool to room temperature.",
+            "In a large bowl, combine sprouts, cucumber, tomato, onion, and green chillies.",
+            "Add chaat masala, roasted cumin powder, black salt, and freshly squeezed lemon juice.",
+            "Toss thoroughly so all vegetables and sprouts are evenly coated.",
+            "Top with juicy pomegranate seeds and fresh chopped coriander; serve immediately."
+        ],
+        "macros": {"protein": 15, "carbs": 38, "fats": 2, "calories": 230}
+    }
+}
+
 # ---------------- DYNAMIC RECIPE GENERATOR ----------------
 @app.route("/api/recipe", methods=["POST"])
 def get_recipe():
@@ -782,31 +968,46 @@ def get_recipe():
         if not clean_name:
             clean_name = "Healthy Meal"
 
-        prompt = f"""
-        Provide a detailed recipe for the Indian/international food item: "{clean_name}".
-        
-        You MUST output a valid JSON response containing EXACTLY these keys:
-        1. "prep_time": A string indicating preparation and cooking time (e.g. "20 mins").
-        2. "ingredients": An array of strings representing ingredients with realistic quantities.
-        3. "instructions": An array of strings representing step-by-step instructions.
-        4. "macros": An object with keys "protein", "carbs", "fats", "calories" (numerical values).
+        # Check knowledge base first for perfect authentic Indian dishes
+        clean_lower = clean_name.lower()
+        matched_kb = None
+        for key, kb_recipe in DISH_RECIPE_KNOWLEDGE.items():
+            if key in clean_lower:
+                matched_kb = kb_recipe
+                break
 
-        Output ONLY raw JSON. Do not wrap in markdown ```json or include any text before or after the JSON.
-        """
-        
-        response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
-        clean_text = extract_json(response.text)
-        recipe_json = json.loads(clean_text)
-        return jsonify({"success": True, "recipe": recipe_json})
-    except Exception as e:
-        print("Recipe generation error:", e)
+        # Attempt Gemini call
+        try:
+            prompt = f"""
+            Provide a detailed recipe for the Indian/international food item: "{clean_name}".
+            
+            You MUST output a valid JSON response containing EXACTLY these keys:
+            1. "prep_time": A string indicating preparation and cooking time (e.g. "20 mins").
+            2. "ingredients": An array of strings representing ingredients with realistic quantities.
+            3. "instructions": An array of strings representing step-by-step instructions.
+            4. "macros": An object with keys "protein", "carbs", "fats", "calories" (numerical values).
+
+            Output ONLY raw JSON. Do not wrap in markdown ```json or include any text before or after the JSON.
+            """
+            response = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+            clean_text = extract_json(response.text)
+            recipe_json = json.loads(clean_text)
+            if recipe_json.get("ingredients") and recipe_json.get("instructions"):
+                return jsonify({"success": True, "recipe": recipe_json})
+        except Exception as gemini_err:
+            print("Gemini recipe call error:", gemini_err)
+
+        # Fallback to matched authentic recipe from catalog
+        if matched_kb:
+            return jsonify({"success": True, "recipe": matched_kb})
+
+        # Generic intelligent fallback
         return jsonify({
             "success": True, 
-            "error_msg": str(e),
             "recipe": {
                 "prep_time": "20 mins",
                 "ingredients": [
-                    f"Main portion for {clean_name}",
+                    f"Fresh ingredients for {clean_name}",
                     "Fresh spices (cumin seeds, turmeric powder, garam masala)",
                     "Healthy cooking oil or Ghee (1 tablespoon)",
                     "Finely chopped ginger, garlic and onions",
@@ -822,6 +1023,9 @@ def get_recipe():
                 "macros": {"protein": 14, "carbs": 42, "fats": 10, "calories": 315}
             }
         }), 200
+    except Exception as e:
+        print("Fatal recipe error:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 def send_email_notification(to_email, subject, body):
     # Log to terminal/console so we can verify it

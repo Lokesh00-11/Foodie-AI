@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -387,8 +388,9 @@ const ResultPage = () => {
   const parseMealItems = (mealString) => {
     if (!mealString || typeof mealString !== 'string') return [];
     
-    // Split combined dishes separated by " + "
-    const rawItems = mealString.split(/\s+\+\s+/);
+    // Split combined dishes separated by " + ", and ALWAYS TAKE ONLY THE FIRST DISH (strictly 1 meal item!)
+    const firstDish = mealString.split(/\s*\+\s*/)[0];
+    const rawItems = [firstDish];
 
     return rawItems.map((raw, idx) => {
       const trimmed = raw.trim();
@@ -447,9 +449,11 @@ const ResultPage = () => {
         const extract = (type) => {
             const regex = new RegExp(`\\[${type.toUpperCase()}\\]: (.*?) \\[END_MEAL\\]`);
             const match = dayData.match(regex);
-            return match ? match[1] : "";
+            if (!match) return "";
+            // Always return only the first dish if combined
+            return match[1].split(/\s*\+\s*/)[0];
         };
-        const calorieMatch = dayData.match(/\\[CALORIE_COUNT\\]: (\d+)/);
+        const calorieMatch = dayData.match(/\[CALORIE_COUNT\]: (\d+)/);
         return {
             Breakfast: extract("BREAKFAST"),
             Lunch: extract("LUNCH"),
@@ -459,8 +463,11 @@ const ResultPage = () => {
         };
     }
     const formatMeal = (items) => {
-        if (!items || !Array.isArray(items)) return "";
-        return items.map(i => i.display_string || "").join(" + ");
+        if (!items) return "";
+        if (Array.isArray(items)) {
+            return items.length > 0 ? (items[0].display_string || items[0].name || "") : "";
+        }
+        return String(items).split(/\s*\+\s*/)[0];
     };
     return {
         Breakfast: formatMeal(dayData.breakfast),
@@ -681,18 +688,19 @@ const ResultPage = () => {
         }
       `}</style>
 
-      {isRecalculating && (
+      {isRecalculating && typeof document !== 'undefined' && createPortal(
         <div style={styles.modalOverlay}>
           <div style={styles.loadingBox}>
             <FontAwesomeIcon icon={faSpinner} spin size="4x" color="#10b981" />
             <h2 style={{ color: '#fff', marginTop: '20px' }}>Recalculating your macros...</h2>
             <p style={{ color: '#cbd5e1' }}>Generating a new AI-optimized plan based on your updated profile.</p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* MODAL UI */}
-      {isModalOpen && (
+      {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div style={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <button style={styles.closeBtn} onClick={() => setIsModalOpen(false)}>
@@ -771,7 +779,8 @@ const ResultPage = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
@@ -1243,7 +1252,7 @@ const ResultPage = () => {
       </footer>
 
       {/* RECIPE DETAILS MODAL */}
-      {isRecipeModalOpen && (
+      {isRecipeModalOpen && typeof document !== 'undefined' && createPortal(
         <div style={styles.modalOverlay} onClick={() => setIsRecipeModalOpen(false)}>
           <div style={{...styles.modalContent, maxWidth: '580px', maxHeight: '85vh', overflowY: 'auto'}} onClick={(e) => e.stopPropagation()}>
             <button style={styles.closeBtn} onClick={() => setIsRecipeModalOpen(false)}>
@@ -1302,10 +1311,11 @@ const ResultPage = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       {/* RE-PLAN ALTERNATIVE BREAKFAST MODAL */}
-      {isReplanModalOpen && (
+      {isReplanModalOpen && typeof document !== 'undefined' && createPortal(
         <div style={styles.modalOverlay} onClick={() => setIsReplanModalOpen(false)}>
           <div style={{...styles.modalContent, maxWidth: '440px', padding: '24px'}} onClick={(e) => e.stopPropagation()}>
             <button style={styles.closeBtn} onClick={() => setIsReplanModalOpen(false)}>
@@ -1472,7 +1482,8 @@ const ResultPage = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -1527,9 +1538,61 @@ const styles = {
   downloadBtn: { padding: '16px 40px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '16px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center' },
   workoutBtn: { padding: '16px 40px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '16px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', marginLeft: '15px' },
   homeBtn: { padding: '16px 40px', background: '#1e293b', color: '#fff', border: 'none', borderRadius: '16px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', marginLeft: '15px' },
-  modalOverlay: { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(15, 23, 42, 0.75)', zIndex: 1000, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(8px)' },
-  modalContent: { background: '#fff', padding: '30px', borderRadius: '24px', width: '90%', maxWidth: '800px', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }, 
-  closeBtn: { position: 'absolute', top: '15px', right: '15px', background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', color: '#64748b', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center' },
+  modalOverlay: { 
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0, 
+    width: '100vw', 
+    height: '100vh', 
+    backgroundColor: 'rgba(15, 23, 42, 0.75)', 
+    zIndex: 99999, 
+    display: 'flex', 
+    flexDirection: 'column', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backdropFilter: 'blur(8px)',
+    padding: '20px',
+    boxSizing: 'border-box'
+  },
+  loadingBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: '40px',
+    background: '#1e293b',
+    borderRadius: '24px',
+    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
+  },
+  modalContent: { 
+    background: '#fff', 
+    padding: '30px', 
+    borderRadius: '24px', 
+    width: '90%', 
+    maxWidth: '650px', 
+    position: 'relative', 
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    maxHeight: '90vh',
+    overflowY: 'auto'
+  }, 
+  closeBtn: { 
+    position: 'absolute', 
+    top: '15px', 
+    right: '15px', 
+    background: '#f1f5f9', 
+    border: 'none', 
+    width: '36px', 
+    height: '36px', 
+    borderRadius: '50%', 
+    color: '#64748b', 
+    cursor: 'pointer', 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    zIndex: 10
+  },
   modalTitle: { margin: '0 0 20px 0', color: '#1e293b', fontSize: '22px', fontWeight: '800' },
   imageContainer: { width: '100%', height: '300px', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#f1f5f9', display: 'flex', justifyContent: 'center', alignItems: 'center' },
   foodImage: { width: '100%', height: '100%', objectFit: 'cover' },
