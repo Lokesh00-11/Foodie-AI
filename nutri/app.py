@@ -344,6 +344,11 @@ def generate_weekly_plan(daily_cal, exclusions, diet_pref):
         
     return weekly_output
 
+# ---------------- ROOT / HEALTH ENDPOINT ----------------
+@app.route("/", methods=["GET"])
+def health():
+    return jsonify({"status": "healthy", "service": "Foodie-AI-Backend"}), 200
+
 # ---------------- MAIN API ENDPOINT ----------------
 @app.route("/api/nutrition", methods=["POST"])
 def api():
