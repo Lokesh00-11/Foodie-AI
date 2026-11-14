@@ -767,7 +767,7 @@ const TrackerDashboard = () => {
                             <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${isChecked
                               ? isOpen
                                 ? 'bg-theme-accent border-emerald-500 text-slate-950'
-                                : 'bg-theme-accent/50 border-emerald-500/40 text-theme-border'
+                                : 'bg-theme-accent/70 border-emerald-500/60 text-slate-900'
                               : 'border-slate-300 bg-theme-card'
                               }`}>
                               {isChecked && <FontAwesomeIcon icon={faCheck} className="text-xs font-black" />}
@@ -776,12 +776,16 @@ const TrackerDashboard = () => {
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-bold capitalize">{meal}</span>
                                 {timeInfo.status === 'open' || unlockedMeals[meal] ? (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-theme-primary-light dark:bg-emerald-900/50 text-theme-primary dark:text-emerald-400">
-                                    <span className="w-1 h-1 rounded-full bg-theme-accent mr-1 animate-pulse"></span>
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${
+                                    unlockedMeals[meal]
+                                      ? 'bg-emerald-100 dark:bg-emerald-950 text-slate-900 dark:text-emerald-100 border-emerald-300 dark:border-emerald-700'
+                                      : 'bg-emerald-50 dark:bg-emerald-900/50 text-slate-900 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700'
+                                  }`}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1 animate-pulse"></span>
                                     {unlockedMeals[meal] ? 'Unlocked' : 'Active'}
                                   </span>
                                 ) : timeInfo.status === 'future' ? (
-                                  <span title={`Unlocks during ${timeInfo.time} (${timeInfo.label})`} className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200 cursor-help">
+                                  <span title={`Unlocks during ${timeInfo.time} (${timeInfo.label})`} className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-100 dark:bg-amber-950 text-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-700 cursor-help">
                                     <FontAwesomeIcon icon={faLock} className="mr-1 text-[8px]" />
                                     Locked
                                   </span>
@@ -791,10 +795,10 @@ const TrackerDashboard = () => {
                                       e.stopPropagation();
                                       setUnlockedMeals(prev => ({ ...prev, [meal]: true }));
                                     }}
-                                    className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 text-theme-border border border-slate-250 cursor-pointer hover:bg-slate-200 transition-colors"
+                                    className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-500 cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors shadow-xs"
                                     title="Click to unlock past meal"
                                   >
-                                    <FontAwesomeIcon icon={faLock} className="mr-1 text-[8px]" />
+                                    <FontAwesomeIcon icon={faLock} className="mr-1 text-[8px] text-slate-800 dark:text-slate-200" />
                                     Closed (Unlock)
                                   </span>
                                 )}
